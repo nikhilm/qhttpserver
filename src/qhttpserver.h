@@ -25,11 +25,14 @@ IN THE SOFTWARE.
 #include <QObject>
 #include <QHostAddress>
 
+struct http_parser;
+
 class QTcpServer;
 
 class QHttpServer : public QObject
 {
     Q_OBJECT
+
 public:
     QHttpServer(QObject *parent = 0);
     virtual ~QHttpServer();
@@ -39,6 +42,18 @@ public:
 private slots:
     void newConnection();
     void parseRequest();
+
+private:
+    static int MessageBegin(http_parser *parser);
+    static int Path(http_parser *parser, const char *at, size_t length);
+    static int QueryString(http_parser *parser, const char *at, size_t length);
+    static int Url(http_parser *parser, const char *at, size_t length);
+    static int Fragment(http_parser *parser, const char *at, size_t length);
+    static int HeaderField(http_parser *parser, const char *at, size_t length);
+    static int HeaderValue(http_parser *parser, const char *at, size_t length);
+    static int HeadersComplete(http_parser *parser);
+    static int Body(http_parser *parser, const char *at, size_t length);
+    static int MessageComplete(http_parser *parser);
 
 private:
     QTcpServer *m_tcpServer;
