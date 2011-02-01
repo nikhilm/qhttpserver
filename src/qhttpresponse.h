@@ -19,37 +19,42 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE. 
 */
-#ifndef Q_HTTP_SERVER
-#define Q_HTTP_SERVER
+#ifndef Q_HTTP_RESPONSE
+#define Q_HTTP_RESPONSE
 
 #include <QObject>
-#include <QHostAddress>
+#include <QHash>
 
-class QTcpServer;
+//
+class QTcpSocket;
 
-class QHttpRequest;
-class QHttpResponse;
+class QHttpConnection;
 
-extern QHash<int, QString> STATUS_CODES;
-
-class QHttpServer : public QObject
+class QHttpResponse : public QObject
 {
     Q_OBJECT
 
 public:
-    QHttpServer(QObject *parent = 0);
-    virtual ~QHttpServer();
+    virtual ~QHttpResponse();
 
-    bool listen(const QHostAddress &address = QHostAddress::Any, quint16 port = 0);
+    void writeHead(int status);
+    void write(const QByteArray &data);
+    void write(const QString &data);
+    void end(const QByteArray &data=QByteArray());
+
+    void setHeader(const QString &field, const QString &value);
 
 signals:
-    void newRequest(QHttpRequest *request, QHttpResponse *response);
-
-private slots:
-    void newConnection();
+    void done();
 
 private:
-    QTcpServer *m_tcpServer;
+    QHttpResponse(QHttpConnection *connection);
+
+    QHttpConnection *m_connection;
+
+    bool m_headerWritten;
+    QHash<QString, QString> m_headers;
+    friend class QHttpConnection;
 };
 
 #endif

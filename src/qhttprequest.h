@@ -19,37 +19,48 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE. 
 */
-#ifndef Q_HTTP_SERVER
-#define Q_HTTP_SERVER
+#ifndef Q_HTTP_REQUEST
+#define Q_HTTP_REQUEST
 
 #include <QObject>
-#include <QHostAddress>
+#include <QHash>
+#include <QUrl>
 
-class QTcpServer;
+class QTcpSocket;
 
-class QHttpRequest;
-class QHttpResponse;
+class QHttpConnection;
 
-extern QHash<int, QString> STATUS_CODES;
-
-class QHttpServer : public QObject
+class QHttpRequest : public QObject
 {
     Q_OBJECT
 
 public:
-    QHttpServer(QObject *parent = 0);
-    virtual ~QHttpServer();
+    virtual ~QHttpRequest();
 
-    bool listen(const QHostAddress &address = QHostAddress::Any, quint16 port = 0);
+    const QString method() const { return m_method; };
+    QUrl url() const { return m_url; };
+    QString path() const;
+    QString httpVersion() const { return m_version; };
+    QString queryString() const;
 
 signals:
-    void newRequest(QHttpRequest *request, QHttpResponse *response);
-
-private slots:
-    void newConnection();
+    void data(const QByteArray &);
+    void end();
 
 private:
-    QTcpServer *m_tcpServer;
+    QHttpRequest(QHttpConnection *connection, QObject *parent = 0);
+
+    void setMethod(const QString &method) { m_method = method; }
+    void setVersion(const QString &version) { m_version = version; }
+    void setUrl(const QUrl &url) { m_url = url; }
+
+    QHttpConnection *m_connection;
+    QHash<QString, QString> m_headers;
+    QString m_method;
+    QUrl m_url;
+    QString m_version;
+
+    friend class QHttpConnection;
 };
 
 #endif

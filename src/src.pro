@@ -11,12 +11,12 @@ CONFIG += dll debug
 
 INCLUDEPATH += $$QHTTPSERVER_BASE/http-parser
 
-PRIVATE_HEADERS += $$QHTTPSERVER_BASE/http-parser/http_parser.h
+PRIVATE_HEADERS += $$QHTTPSERVER_BASE/http-parser/http_parser.h qhttpconnection.h
 
-PUBLIC_HEADERS += qhttpserver.h
+PUBLIC_HEADERS += qhttpserver.h qhttprequest.h qhttpresponse.h
 
 HEADERS = $$PRIVATE_HEADERS $$PUBLIC_HEADERS
-SOURCES = qhttpserver.cpp $$QHTTPSERVER_BASE/http-parser/http_parser.c
+SOURCES = *.cpp $$QHTTPSERVER_BASE/http-parser/http_parser.c
 
 OBJECTS_DIR = $$QHTTPSERVER_BASE/build
 MOC_DIR = $$QHTTPSERVER_BASE/build
