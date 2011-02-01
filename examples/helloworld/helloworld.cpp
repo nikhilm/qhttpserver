@@ -1,7 +1,6 @@
 #include "helloworld.h"
 
 #include <QCoreApplication>
-#include <QDebug>
 
 #include <qhttpserver.h>
 #include <qhttprequest.h>
@@ -17,11 +16,6 @@ Hello::Hello()
 
 void Hello::handle(QHttpRequest *req, QHttpResponse *resp)
 {
-    qDebug() << "Handling request";
-    qDebug() << "Method" << req->method();
-    qDebug() << "HTTP Version" << req->httpVersion();
-    qDebug() << "URL" << req->url();
-    resp->setHeader("Content-Type", "text/html");
     resp->setHeader("Content-Length", "11");
     resp->writeHead(200);
     resp->write(QString("Hello World"));
@@ -31,8 +25,6 @@ void Hello::handle(QHttpRequest *req, QHttpResponse *resp)
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
-
     Hello hello;
-    
     app.exec();
 }
