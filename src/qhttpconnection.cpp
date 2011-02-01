@@ -136,9 +136,22 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     /** set version **/
     theConnection->m_request->setVersion(QString("%1.%2").arg(parser->http_major).arg(parser->http_minor));
 
-    // TODO don't create a response object just like that
-    emit theConnection->newRequest(theConnection->m_request, new QHttpResponse(theConnection));
+    QHttpResponse *response = new QHttpResponse(theConnection);
+    if( parser->http_major < 1 || parser->http_minor < 1 )
+        response->m_keepAlive = false;
+
+    connect(response, SIGNAL(done()), theConnection, SLOT(responseDone()));
+    emit theConnection->newRequest(theConnection->m_request, response);
     return 0;
+}
+
+void QHttpConnection::responseDone()
+{
+    QHttpResponse *response = qobject_cast<QHttpResponse*>(QObject::sender());
+    if( response->m_last )
+    {
+        m_socket->disconnectFromHost();
+    }
 }
 
 int QHttpConnection::MessageComplete(http_parser *parser)

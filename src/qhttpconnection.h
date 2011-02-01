@@ -48,6 +48,7 @@ signals:
 
 private slots:
     void parseRequest();
+    void responseDone();
 
 private:
     static int MessageBegin(http_parser *parser);

@@ -136,6 +136,7 @@ void QHttpResponse::end(const QByteArray &data)
 {
     write(data);
 
+    emit done();
     deleteLater();
     // TODO: end connection and delete ourselves
 }
