@@ -63,6 +63,9 @@ QHttpConnection::~QHttpConnection()
     delete m_socket;
     m_socket = 0;
 
+    if( m_request )
+        delete m_request;
+
     free(m_parser);
     m_parser = 0;
 }

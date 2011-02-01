@@ -76,6 +76,7 @@ void QHttpResponse::write(const QString &data)
 void QHttpResponse::end(const QByteArray &data)
 {
     write(data);
-    m_connection->flush();
+
+    deleteLater();
     // TODO: end connection and delete ourselves
 }
