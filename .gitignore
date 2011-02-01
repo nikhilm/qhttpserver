@@ -4,3 +4,4 @@ Makefile
 *.o
 moc_*
 examples/helloworld/helloworld
+docs/html

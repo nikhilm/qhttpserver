@@ -31,6 +31,21 @@ class QTcpSocket;
 
 class QHttpConnection;
 
+/*! \class QHttpRequest
+ *
+ * The QHttpRequest class represents the header and data
+ * sent by the client.
+ *
+ * Header data is available immediately.
+ *
+ * Body data is streamed as it comes in via the data(const QByteArray&) signal.
+ * As a consequence the application's request callback should ensure that it
+ * connects to the data() signal before control returns back to the event loop.
+ * Otherwise there is a risk of some data never being received by the
+ * application.
+ *
+ * The class is <strong>read-only</strong> by users of %QHttpServer.
+ */
 class QHttpRequest : public QObject
 {
     Q_OBJECT
@@ -38,14 +53,61 @@ class QHttpRequest : public QObject
 public:
     virtual ~QHttpRequest();
 
+    /*!
+     * The method used for the request.
+     *
+     * \returns One of the following strings:
+     * <ul>
+     * <li>DELETE</li>
+     * <li>GET</li>
+     * <li>HEAD</li>
+     * <li>POST</li>
+     * <li>PUT</li>
+     * <li>CONNECT</li>
+     * <li>OPTIONS</li>
+     * <li>TRACE</li>
+     * </ul>
+     */
     const QString method() const { return m_method; };
+
+    /*!
+     * The complete URL for the request. This
+     * includes the path and query string.
+     *
+     */
     QUrl url() const { return m_url; };
+
+    /*!
+     * The path portion of the query URL.
+     *
+     * \sa url()
+     */
     QString path() const { return m_url.path(); };
+
+    /*!
+     * The HTTP version used by the client as a 
+     * 'x.x' string.
+     */
     QString httpVersion() const { return m_version; };
+
+    /*!
+     * Any query string included as part of a request.
+     * Usually used to send data in a GET request.
+     */
     QString queryString() const;
 
 signals:
+    /*!
+     * This signal is emitted whenever body data is encountered
+     * in a message.
+     * This may be emitted zero or more times.
+     */
     void data(const QByteArray &);
+
+    /*!
+     * Emitted at the end of the HTTP request.
+     * No data() signals will be emitted after this.
+     */
     void end();
 
 private:
