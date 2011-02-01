@@ -41,7 +41,7 @@ public:
     QHttpServer(QObject *parent = 0);
     virtual ~QHttpServer();
 
-    bool listen(const QHostAddress &address = QHostAddress::Any, quint16 port);
+    bool listen(const QHostAddress &address = QHostAddress::Any, quint16 port=0);
     bool listen(quint16 port);
 
 signals:
