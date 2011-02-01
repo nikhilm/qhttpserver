@@ -40,7 +40,7 @@ public:
 
     const QString method() const { return m_method; };
     QUrl url() const { return m_url; };
-    QString path() const;
+    QString path() const { return m_url.path(); };
     QString httpVersion() const { return m_version; };
     QString queryString() const;
 
