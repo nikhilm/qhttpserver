@@ -1,3 +1,6 @@
 build
 lib
 Makefile
+*.o
+moc_*
+examples/helloworld/helloworld
