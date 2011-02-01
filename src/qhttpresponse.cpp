@@ -30,6 +30,12 @@ QHttpResponse::QHttpResponse(QHttpConnection *connection)
     : QObject(0)
     , m_connection(connection)
     , m_headerWritten(false)
+    , m_sentConnectionHeader(false)
+    , m_sentContentLengthHeader(false)
+    , m_sentTransferEncodingHeader(false)
+    , m_keepAlive(true)
+    , m_last(false)
+    , m_useChunkedEncoding(false)
 {
 }
 
@@ -42,19 +48,72 @@ void QHttpResponse::setHeader(const QString &field, const QString &value)
     m_headers[field] = value;
 }
 
+void QHttpResponse::writeHeaders()
+{
+#define WRITE_HEADER(field, value)\
+    do {\
+    m_connection->write(field);\
+    m_connection->write(": ");\
+    m_connection->write(value);\
+    m_connection->write("\r\n");\
+    } while(0)
+
+    foreach(QString name, m_headers.keys())
+    {
+        QString value = m_headers[name];
+        if( name.compare("connection", Qt::CaseInsensitive) == 0 ) 
+        {
+            m_sentConnectionHeader = true;
+            if( value == "close" )
+                m_last = true;
+            else
+                m_keepAlive = true;
+        }
+        else if( name.compare("transfer-encoding", Qt::CaseInsensitive) == 0 )
+        {
+            m_sentTransferEncodingHeader = true;
+            if( value == "chunked" )
+                m_useChunkedEncoding = true;
+        }
+        else if( name.compare("content-length", Qt::CaseInsensitive) == 0 )
+        {
+            m_sentContentLengthHeader = true;
+        }
+        //TODO: Expect case
+
+        WRITE_HEADER(name.toAscii(), value.toAscii());
+    }
+
+    if( !m_sentConnectionHeader )
+    {
+        if( m_keepAlive &&
+                ( m_sentContentLengthHeader || m_useChunkedEncoding ) )
+        {
+            WRITE_HEADER("Connection", "keep-alive");
+        }
+        else
+        {
+            m_last = true;
+            WRITE_HEADER("Connection", "close");
+        }
+    }
+
+    if( !m_sentContentLengthHeader && !m_sentTransferEncodingHeader )
+    {
+        if( m_useChunkedEncoding )
+            WRITE_HEADER("Transfer-Encoding", "chunked");
+        else
+            m_last = true;
+    }
+}
+
 void QHttpResponse::writeHead(int status)
 {
     if( m_headerWritten ) return;
 
     m_connection->write(QString("HTTP/1.1 %1 %2\r\n").arg(status).arg(STATUS_CODES[status]).toAscii());
     
-    foreach(QString name, m_headers.keys())
-    {
-        m_connection->write(name.toAscii());
-        m_connection->write(": ");
-        m_connection->write(m_headers[name].toAscii());
-        m_connection->write("\r\n");
-    }
+    writeHeaders();
 
     m_connection->write("\r\n");
     m_headerWritten = true;

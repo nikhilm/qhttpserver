@@ -51,11 +51,21 @@ signals:
 private:
     QHttpResponse(QHttpConnection *connection);
 
+    void writeHeaders();
+
+private:
     QHttpConnection *m_connection;
 
     bool m_headerWritten;
     QHash<QString, QString> m_headers;
     friend class QHttpConnection;
+
+    bool m_sentConnectionHeader;
+    bool m_sentContentLengthHeader;
+    bool m_sentTransferEncodingHeader;
+    bool m_keepAlive;
+    bool m_last;
+    bool m_useChunkedEncoding;
 };
 
 #endif
