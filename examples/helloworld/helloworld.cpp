@@ -22,6 +22,7 @@ void Hello::handle(QHttpRequest *req, QHttpResponse *resp)
     qDebug() << "HTTP Version" << req->httpVersion();
     qDebug() << "URL" << req->url();
     resp->setHeader("Content-Type", "text/html");
+    resp->setHeader("Content-Length", "11");
     resp->writeHead(200);
     resp->write(QString("Hello World"));
     resp->end();
