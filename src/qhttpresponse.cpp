@@ -122,7 +122,10 @@ void QHttpResponse::writeHead(int status)
 void QHttpResponse::write(const QByteArray &data)
 {
     if( !m_headerWritten )
-        writeHead(200);
+    {
+        qDebug() << "You MUST call writeHead() before writing body data";
+        return;
+    }
 
     m_connection->write(data);
 }
