@@ -36,6 +36,9 @@ class QHttpResponse;
  */
 typedef QHash<QString, QString> HeaderMap;
 
+/*!
+ * Maps status codes to string reason phrases
+ */
 extern QHash<int, QString> STATUS_CODES;
 
 /*! \mainpage %QHttpServer Documentation
@@ -71,7 +74,11 @@ extern QHash<int, QString> STATUS_CODES;
  * See the QHttpServer class documentation for an example.
  *
  * \example helloworld/helloworld.cpp
+ * \example helloworld/helloworld.h
  * \example greeting/greeting.cpp
+ * \example greeting/greeting.h
+ * \example bodydata/bodydata.cpp
+ * \example bodydata/bodydata.h
  */
 
 /*! \class QHttpServer
@@ -133,6 +140,74 @@ signals:
      *
      * The slot should use the @c request and @c response
      * objects to communicate with the client.
+     *
+     * \section memorymanagement Memory Management
+     *
+     * The QHttpRequest and QHttpResponse deletion policies
+     * are such.
+     *
+     * QHttpRequest is <strong>never</strong> deleted by %QHttpServer.
+     * Since it is not possible to determine till what point the application
+     * may want access to its data, it is up to the application to delete it.
+     * A recommended way to handle this is to create a new responder object for
+     * every request and to delete the request in that object's destructor. The
+     * object itself can be deleted by connecting to QHttpResponse's done()
+     * slot as explained below.
+     *
+     * You should <strong>NOT</strong> delete the QHttpRequest object until it
+     * has emitted an QHttpRequest::end() signal.
+     *
+     * QHttpResponse queues itself up for auto-deletion once the application
+     * calls its end() method. Once the data has been flushed to the underlying
+     * socket, the object will emit a QHttpResponse::done() signal before queueing itself up
+     * for deletion. You should <strong>NOT</strong> interact with the response
+     * object once it has emitted QHttpResponse::done() although actual deletion does not
+     * happen until QHttpResponse::destroyed() is emitted.
+     * QHttpResponse::done() serves as a useful way to handle memory management of the
+     * application itself. For example:
+     *
+     * \code
+     * MyApp::MyApp()
+     *     : QObject(0)
+     * {
+     *   QHttpServer *s = new QHttpServer;
+     *   connect(s, SIGNAL(newRequest(...)), this, SLOT(handle(...)));
+     *   s.listen(8000);
+     * }
+     *
+     * void MyApp::handle(QHttpRequest *request, QHttpResponse *response)
+     * {
+     *   if( request->url() matches a route )
+     *     new Responder(request, response);
+     *   else
+     *     new PageNotFound(request, response);
+     * }
+     *
+     * ...
+     *
+     * Responder::Responder(QHttpRequest *request, QHttpResponse *response)
+     * {
+     *   m_request = request;
+     *
+     *   connect(request, SIGNAL(end()), response, SLOT(end()));
+     *   // Once the request is complete, the response is ended.
+     *   // when the response ends, it deletes itself
+     *   // the Responder object connects to done()
+     *   // which will lead to it being deleted
+     *   // and this will delete the request.
+     *   // So all 3 are properly deleted.
+     *   connect(response, SIGNAL(done()), this, SLOT(deleteLater()));
+     *   response->writeHead(200);
+     *   response->write("Quitting soon");
+     * }
+     *
+     * Responder::~Responder()
+     * {
+     *   delete m_request;
+     *   m_request = 0;
+     * }
+     * \endcode
+     *
      */
     void newRequest(QHttpRequest *request, QHttpResponse *response);
 
