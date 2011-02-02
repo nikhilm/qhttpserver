@@ -5,3 +5,5 @@ Makefile
 moc_*
 examples/helloworld/helloworld
 docs/html
+tests/tests
+examples/greeting/greeting
