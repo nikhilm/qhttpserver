@@ -19,6 +19,9 @@ Greeting::Greeting()
 
 void Greeting::handle(QHttpRequest *req, QHttpResponse *resp)
 {
+    foreach(QString k, req->headers().keys())
+        qDebug() << "Header" << k << ":" << req->headers()[k];
+
     QRegExp exp("^/user/([a-z]+$)");
     if( exp.indexIn(req->path()) != -1 )
     {
