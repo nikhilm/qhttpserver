@@ -132,18 +132,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     Q_ASSERT(theConnection->m_request);
 
     /** set method **/
-    QString method;
-    switch(parser->method)
-    {
-        case HTTP_DELETE:     method = "DELETE"; break;
-        case HTTP_GET:        method = "GET"; break;
-        case HTTP_HEAD:       method = "HEAD"; break;
-        case HTTP_POST:       method = "POST"; break;
-        case HTTP_PUT:        method = "PUT"; break;
-        case HTTP_CONNECT:    method = "CONNECT"; break;
-        case HTTP_OPTIONS:    method = "OPTIONS"; break;
-        case HTTP_TRACE:      method = "TRACE"; break;
-    }
+    QString method = QString::fromAscii(http_method_str((enum http_method) parser->method));
     theConnection->m_request->setMethod(method);
 
     /** set version **/
