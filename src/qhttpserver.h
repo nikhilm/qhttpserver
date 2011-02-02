@@ -23,6 +23,10 @@
 #ifndef Q_HTTP_SERVER
 #define Q_HTTP_SERVER
 
+#define QHTTPSERVER_VERSION_MAJOR 0
+#define QHTTPSERVER_VERSION_MINOR 1
+#define QHTTPSERVER_VERSION_PATCH 0
+
 #include <QObject>
 #include <QHostAddress>
 
