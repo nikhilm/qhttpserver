@@ -120,8 +120,6 @@ int QHttpConnection::MessageBegin(http_parser *parser)
 
 int QHttpConnection::HeadersComplete(http_parser *parser)
 {
-    qDebug() << "header complete";
-    qDebug() << parser->method << parser->http_major << parser->http_minor;
     QHttpConnection *theConnection = (QHttpConnection *)parser->data;
     Q_ASSERT(theConnection->m_request);
 
@@ -169,7 +167,6 @@ int QHttpConnection::Path(http_parser *parser, const char *at, size_t length)
     QUrl url = theConnection->m_request->url();
     url.setPath(path);
     theConnection->m_request->setUrl(url);
-    qDebug() << "GOT Path" << theConnection->m_request->url();
     return 0;
 }
 
