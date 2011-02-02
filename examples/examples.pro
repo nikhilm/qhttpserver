@@ -1,4 +1,5 @@
 TEMPLATE = subdirs
 SUBDIRS += \
 helloworld\
-greeting
+greeting\
+bodydata\
