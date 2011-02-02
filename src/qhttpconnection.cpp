@@ -104,6 +104,15 @@ void QHttpConnection::flush()
     m_socket->flush();
 }
 
+void QHttpConnection::responseDone()
+{
+    QHttpResponse *response = qobject_cast<QHttpResponse*>(QObject::sender());
+    if( response->m_last )
+    {
+        m_socket->disconnectFromHost();
+    }
+}
+
 /********************
  * Static Callbacks *
  *******************/
@@ -155,15 +164,6 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     // we are good to go!
     emit theConnection->newRequest(theConnection->m_request, response);
     return 0;
-}
-
-void QHttpConnection::responseDone()
-{
-    QHttpResponse *response = qobject_cast<QHttpResponse*>(QObject::sender());
-    if( response->m_last )
-    {
-        m_socket->disconnectFromHost();
-    }
 }
 
 int QHttpConnection::MessageComplete(http_parser *parser)
