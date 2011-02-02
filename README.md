@@ -5,7 +5,8 @@ A Qt HTTP Server - because hard-core programmers write web-apps in C++ :)
 
 It uses Ryan Dahl's [HTTP Parser](http://github.com/ry/http-parser) and is asynchronous and does not require any inheritance.
 
-**NOTE: QHttpServer is NOT fully functional and HTTP compliant right now! DO NOT use it!**
+**NOTE: QHttpServer is NOT fully HTTP compliant right now! DO NOT use it for
+anything complex**
 
 Installation
 ------------
