@@ -158,6 +158,11 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
 int QHttpConnection::MessageComplete(http_parser *parser)
 {
     qDebug() << "Message complete";
+    // TODO: do cleanup and prepare for next request
+    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    Q_ASSERT(theConnection->m_request);
+
+    emit theConnection->m_request->end();
     return 0;
 }
 
@@ -235,5 +240,9 @@ int QHttpConnection::HeaderValue(http_parser *parser, const char *at, size_t len
 
 int QHttpConnection::Body(http_parser *parser, const char *at, size_t length)
 {
+    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    Q_ASSERT(theConnection->m_request);
+
+    emit theConnection->m_request->data(QByteArray(at, length));
     return 0;
 }
