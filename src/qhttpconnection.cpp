@@ -110,6 +110,7 @@ void QHttpConnection::flush()
 int QHttpConnection::MessageBegin(http_parser *parser)
 {
     QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    theConnection->m_currentHeaders.clear();
     theConnection->m_request = new QHttpRequest(theConnection);
     return 0;
 }
@@ -139,11 +140,19 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     /** set version **/
     theConnection->m_request->setVersion(QString("%1.%2").arg(parser->http_major).arg(parser->http_minor));
 
+    // Insert last remaining header
+    theConnection->m_currentHeaders[theConnection->m_currentHeaderField.toLower()] = theConnection->m_currentHeaderValue;
+
+    /** set headers **/
+    theConnection->m_request->setHeaders(theConnection->m_currentHeaders);
+
     QHttpResponse *response = new QHttpResponse(theConnection);
     if( parser->http_major < 1 || parser->http_minor < 1 )
         response->m_keepAlive = false;
 
     connect(response, SIGNAL(done()), theConnection, SLOT(responseDone()));
+
+    // we are good to go!
     emit theConnection->newRequest(theConnection->m_request, response);
     return 0;
 }
@@ -197,16 +206,41 @@ int QHttpConnection::Url(http_parser *parser, const char *at, size_t length)
 
 int QHttpConnection::Fragment(http_parser *parser, const char *at, size_t length)
 {
+    // TODO: Implement
+    Q_ASSERT(false);
     return 0;
 }
 
 int QHttpConnection::HeaderField(http_parser *parser, const char *at, size_t length)
 {
+    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    Q_ASSERT(theConnection->m_request);
+
+    // insert the header we parsed previously
+    // into the header map
+    if( !theConnection->m_currentHeaderField.isEmpty() && !theConnection->m_currentHeaderValue.isEmpty() )
+    {
+        // header names are always lower-cased
+        theConnection->m_currentHeaders[theConnection->m_currentHeaderField.toLower()] = theConnection->m_currentHeaderValue;
+        // clear header value. this sets up a nice
+        // feedback loop where the next time
+        // HeaderValue is called, it can simply append
+        theConnection->m_currentHeaderField = QString();
+        theConnection->m_currentHeaderValue = QString();
+    }
+
+    QString fieldSuffix = QString::fromAscii(at, length);
+    theConnection->m_currentHeaderField += fieldSuffix;
     return 0;
 }
 
 int QHttpConnection::HeaderValue(http_parser *parser, const char *at, size_t length)
 {
+    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    Q_ASSERT(theConnection->m_request);
+
+    QString valueSuffix = QString::fromAscii(at, length);
+    theConnection->m_currentHeaderValue += valueSuffix;
     return 0;
 }
 

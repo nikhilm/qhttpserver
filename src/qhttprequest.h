@@ -31,6 +31,8 @@ class QTcpSocket;
 
 class QHttpConnection;
 
+typedef QHash<QString, QString> HeaderMap;
+
 /*! \class QHttpRequest
  *
  * The QHttpRequest class represents the header and data
@@ -96,6 +98,25 @@ public:
      */
     QString queryString() const;
 
+    /*!
+     * Get a hash of the headers sent by the client.
+     * NOTE: All header names are <strong>lowercase</strong>
+     * so that Content-Length becomes content-length and so on.
+     *
+     * This returns a reference! If you want to store headers
+     * somewhere else, where the request may be deleted,
+     * make sure you store them as a copy.
+     */
+    const HeaderMap& headers() const { return m_headers; };
+
+    /*!
+     * Get the value of a header
+     *
+     * \param field Name of the header field (lowercase).
+     * \return Value of the header or null QString()
+     */
+    QString header(const QString &field) { return m_headers[field]; };
+
 signals:
     /*!
      * This signal is emitted whenever body data is encountered
@@ -116,9 +137,10 @@ private:
     void setMethod(const QString &method) { m_method = method; }
     void setVersion(const QString &version) { m_version = version; }
     void setUrl(const QUrl &url) { m_url = url; }
+    void setHeaders(const HeaderMap headers) { m_headers = headers; }
 
     QHttpConnection *m_connection;
-    QHash<QString, QString> m_headers;
+    HeaderMap m_headers;
     QString m_method;
     QUrl m_url;
     QString m_version;

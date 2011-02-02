@@ -24,6 +24,7 @@
 #define Q_HTTP_CONNECTION
 
 #include <QObject>
+#include <QHash>
 
 #include <http_parser.h>
 
@@ -31,6 +32,8 @@ class QTcpSocket;
 
 class QHttpRequest;
 class QHttpResponse;
+
+typedef QHash<QString, QString> HeaderMap;
 
 class QHttpConnection : public QObject
 {
@@ -70,6 +73,11 @@ private:
     // since there can only be one request at any time
     // even with pipelining
     QHttpRequest *m_request;
+
+    // the ones we are reading in from the parser
+    HeaderMap m_currentHeaders;
+    QString m_currentHeaderField;
+    QString m_currentHeaderValue;
 };
 
 #endif

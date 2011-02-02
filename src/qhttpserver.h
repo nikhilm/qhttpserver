@@ -31,6 +31,11 @@ class QTcpServer;
 class QHttpRequest;
 class QHttpResponse;
 
+/*!
+ * A map of request or response headers
+ */
+typedef QHash<QString, QString> HeaderMap;
+
 extern QHash<int, QString> STATUS_CODES;
 
 /*! \mainpage %QHttpServer Documentation
