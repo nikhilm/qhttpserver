@@ -84,7 +84,7 @@ public slots:
      * This will emit done() and queue this object
      * for deletion. For details see \ref memorymanagement
      */
-    void end(const QByteArray &data=QByteArray());
+    void end(const QString &data=QString());
 
     /*!
      * Set a response header @c field to @c value

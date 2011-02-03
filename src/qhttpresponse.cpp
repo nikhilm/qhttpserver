@@ -132,10 +132,10 @@ void QHttpResponse::write(const QByteArray &data)
 
 void QHttpResponse::write(const QString &data)
 {
-    m_connection->write(data.toAscii());
+    m_connection->write(data.toUtf8());
 }
 
-void QHttpResponse::end(const QByteArray &data)
+void QHttpResponse::end(const QString &data)
 {
     write(data);
 
