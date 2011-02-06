@@ -59,7 +59,6 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
 
 QHttpConnection::~QHttpConnection()
 {
-    qDebug() << "Disconnected. Deleting this connection object";
     delete m_socket;
     m_socket = 0;
 
@@ -77,12 +76,10 @@ void QHttpConnection::parseRequest()
 
         if( arr.size() < 0 ) {
             // TODO
-            qDebug() << "Handle closed connection";
         }
         else {
             int nparsed = http_parser_execute(m_parser, &m_parserSettings, arr.data(), arr.size());
             if( nparsed != arr.size() ) {
-                qDebug() << "ERROR PARSING!";
             }
         }
     }
@@ -149,7 +146,6 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
 
 int QHttpConnection::MessageComplete(http_parser *parser)
 {
-    qDebug() << "Message complete";
     // TODO: do cleanup and prepare for next request
     QHttpConnection *theConnection = (QHttpConnection *)parser->data;
     Q_ASSERT(theConnection->m_request);
@@ -175,7 +171,6 @@ int QHttpConnection::QueryString(http_parser *parser, const char *at, size_t len
     QHttpConnection *theConnection = (QHttpConnection *)parser->data;
     Q_ASSERT(theConnection->m_request);
 
-    qDebug() << "GOT query string" << QString::fromAscii(at, length) << "FAILING DUE TO NON-IMPLEMENTATION";
     Q_ASSERT(false);
     return 0;
 }
@@ -185,7 +180,6 @@ int QHttpConnection::Url(http_parser *parser, const char *at, size_t length)
     QHttpConnection *theConnection = (QHttpConnection *)parser->data;
     theConnection->m_request->setUrl(QString::fromAscii(at, length));
 
-    qDebug() << "GOT URL" << theConnection->m_request->url();
     return 0;
 }
 
