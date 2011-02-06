@@ -3,7 +3,6 @@
 #include <QCoreApplication>
 #include <QRegExp>
 #include <QStringList>
-#include <QDebug>
 
 #include <qhttpserver.h>
 #include <qhttprequest.h>
@@ -19,17 +18,14 @@ Greeting::Greeting()
 
 void Greeting::handle(QHttpRequest *req, QHttpResponse *resp)
 {
-    foreach(QString k, req->headers().keys())
-        qDebug() << "Header" << k << ":" << req->headers()[k];
-
-    QRegExp exp("^/user/([a-z]+$)");
+    QRegExp exp("^/user/([a-z]+)$");
     if( exp.indexIn(req->path()) != -1 )
     {
         resp->setHeader("Content-Type", "text/html");
         resp->writeHead(200);
         QString name = exp.capturedTexts()[1];
 
-        QString reply = tr("<html><head><title>Greeting App</title></head><body><h1>Hello  %1!</h1></body></html>");
+        QString reply = tr("<html><head><title>Greeting App</title></head><body><h1>Hello %1!</h1></body></html>");
         resp->end(reply.arg(name).toAscii());
     }
     else
