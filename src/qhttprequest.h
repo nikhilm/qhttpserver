@@ -25,13 +25,14 @@
 
 #include <QObject>
 #include <QHash>
+#include <QMetaType>
 #include <QUrl>
 
 class QTcpSocket;
 
 class QHttpConnection;
 
-typedef QHash<QString, QString> HeaderMap;
+typedef QHash<QString, QString> HeaderHash;
 
 /*! \class QHttpRequest
  *
@@ -51,6 +52,8 @@ typedef QHash<QString, QString> HeaderMap;
 class QHttpRequest : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(HeaderHash headers READ headers);
 
 public:
     virtual ~QHttpRequest();
@@ -107,7 +110,7 @@ public:
      * somewhere else, where the request may be deleted,
      * make sure you store them as a copy.
      */
-    const HeaderMap& headers() const { return m_headers; };
+    const HeaderHash& headers() const { return m_headers; };
 
     /*!
      * Get the value of a header
@@ -137,10 +140,10 @@ private:
     void setMethod(const QString &method) { m_method = method; }
     void setVersion(const QString &version) { m_version = version; }
     void setUrl(const QUrl &url) { m_url = url; }
-    void setHeaders(const HeaderMap headers) { m_headers = headers; }
+    void setHeaders(const HeaderHash headers) { m_headers = headers; }
 
     QHttpConnection *m_connection;
-    HeaderMap m_headers;
+    HeaderHash m_headers;
     QString m_method;
     QUrl m_url;
     QString m_version;

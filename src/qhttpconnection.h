@@ -33,7 +33,7 @@ class QTcpSocket;
 class QHttpRequest;
 class QHttpResponse;
 
-typedef QHash<QString, QString> HeaderMap;
+typedef QHash<QString, QString> HeaderHash;
 
 class QHttpConnection : public QObject
 {
@@ -75,7 +75,7 @@ private:
     QHttpRequest *m_request;
 
     // the ones we are reading in from the parser
-    HeaderMap m_currentHeaders;
+    HeaderHash m_currentHeaders;
     QString m_currentHeaderField;
     QString m_currentHeaderValue;
 };

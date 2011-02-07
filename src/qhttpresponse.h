@@ -31,6 +31,8 @@ class QTcpSocket;
 
 class QHttpConnection;
 
+typedef QHash<QString, QString> HeaderHash;
+
 /*!
  * The QHttpResponse class handles sending
  * data back to the client in response to a request.
@@ -109,7 +111,7 @@ private:
     QHttpConnection *m_connection;
 
     bool m_headerWritten;
-    QHash<QString, QString> m_headers;
+    HeaderHash m_headers;
     friend class QHttpConnection;
 
     bool m_sentConnectionHeader;

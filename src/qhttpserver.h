@@ -38,7 +38,7 @@ class QHttpResponse;
 /*!
  * A map of request or response headers
  */
-typedef QHash<QString, QString> HeaderMap;
+typedef QHash<QString, QString> HeaderHash;
 
 /*!
  * Maps status codes to string reason phrases
