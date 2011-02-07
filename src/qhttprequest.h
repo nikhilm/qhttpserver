@@ -53,9 +53,13 @@ class QHttpRequest : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(HeaderHash headers READ headers);
+    Q_PROPERTY(HeaderHash headers    READ headers);
     Q_PROPERTY(QString remoteAddress READ remoteAddress);
     Q_PROPERTY(quint16 remotePort    READ remotePort);
+    Q_PROPERTY(QString method        READ method);
+    Q_PROPERTY(QUrl    url           READ url);
+    Q_PROPERTY(QString path          READ path);
+    Q_PROPERTY(QString httpVersion   READ httpVersion);
 
 public:
     virtual ~QHttpRequest();
@@ -75,33 +79,33 @@ public:
      * <li>TRACE</li>
      * </ul>
      */
-    const QString method() const { return m_method; };
+    const QString& method() const { return m_method; };
 
     /*!
      * The complete URL for the request. This
      * includes the path and query string.
      *
      */
-    QUrl url() const { return m_url; };
+    const QUrl& url() const { return m_url; };
 
     /*!
      * The path portion of the query URL.
      *
      * \sa url()
      */
-    QString path() const { return m_url.path(); };
+    const QString& path() const { return m_url.path(); };
 
     /*!
      * The HTTP version used by the client as a 
      * 'x.x' string.
      */
-    QString httpVersion() const { return m_version; };
+    const QString& httpVersion() const { return m_version; };
 
     /*!
      * Any query string included as part of a request.
      * Usually used to send data in a GET request.
      */
-    QString queryString() const;
+    const QString& queryString() const;
 
     /*!
      * Get a hash of the headers sent by the client.
