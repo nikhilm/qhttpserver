@@ -54,6 +54,8 @@ class QHttpRequest : public QObject
     Q_OBJECT
 
     Q_PROPERTY(HeaderHash headers READ headers);
+    Q_PROPERTY(QString remoteAddress READ remoteAddress);
+    Q_PROPERTY(quint16 remotePort    READ remotePort);
 
 public:
     virtual ~QHttpRequest();
@@ -120,6 +122,16 @@ public:
      */
     QString header(const QString &field) { return m_headers[field]; };
 
+    /*!
+     * IP Address of the client in dotted decimal format
+     */
+    const QString& remoteAddress() const { return m_remoteAddress; };
+
+    /*!
+     * Outbound connection port for the client.
+     */
+    quint16 remotePort() const { return m_remotePort; };
+
 signals:
     /*!
      * This signal is emitted whenever body data is encountered
@@ -147,6 +159,8 @@ private:
     QString m_method;
     QUrl m_url;
     QString m_version;
+    QString m_remoteAddress;
+    quint16 m_remotePort;
 
     friend class QHttpConnection;
 };

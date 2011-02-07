@@ -133,6 +133,10 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     /** set headers **/
     theConnection->m_request->setHeaders(theConnection->m_currentHeaders);
 
+    /** set client information **/
+    theConnection->m_request->m_remoteAddress = theConnection->m_socket->peerAddress().toString();
+    theConnection->m_request->m_remotePort = theConnection->m_socket->peerPort();
+
     QHttpResponse *response = new QHttpResponse(theConnection);
     if( parser->http_major < 1 || parser->http_minor < 1 )
         response->m_keepAlive = false;
