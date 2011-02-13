@@ -27,6 +27,7 @@
 QHttpRequest::QHttpRequest(QHttpConnection *connection, QObject *parent)
     : QObject(parent)
     , m_connection(connection)
+    , m_url("http://localhost/")
 {
 }
 

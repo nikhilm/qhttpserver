@@ -93,7 +93,7 @@ public:
      *
      * \sa url()
      */
-    const QString& path() const { return m_url.path(); };
+    const QString path() const { return m_url.path(); };
 
     /*!
      * The HTTP version used by the client as a 

@@ -131,6 +131,14 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     theConnection->m_currentHeaders[theConnection->m_currentHeaderField.toLower()] = theConnection->m_currentHeaderValue;
 
     /** set headers **/
+    if( theConnection->m_currentHeaders.contains("host") ) {
+        QUrl url = QUrl(theConnection->m_request->url());
+        url.setAuthority(theConnection->m_currentHeaders["host"]);
+        theConnection->m_request->setUrl(url);
+    }
+    else {
+        // TODO: abort with 400
+    }
     theConnection->m_request->setHeaders(theConnection->m_currentHeaders);
 
     /** set client information **/
@@ -181,8 +189,9 @@ int QHttpConnection::QueryString(http_parser *parser, const char *at, size_t len
 
 int QHttpConnection::Url(http_parser *parser, const char *at, size_t length)
 {
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
-    theConnection->m_request->setUrl(QString::fromAscii(at, length));
+//    qDebug() << "URL CALL" << QString::fromAscii(at, length);
+//    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+//    theConnection->m_request->m_url->setPath(QString::fromAscii(at, length));
 
     return 0;
 }
