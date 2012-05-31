@@ -22,6 +22,8 @@
 
 #include "qhttpresponse.h"
 
+#include <QDateTime>
+
 #include "qhttpserver.h"
 #include "qhttpconnection.h"
 
@@ -33,6 +35,7 @@ QHttpResponse::QHttpResponse(QHttpConnection *connection)
     , m_sentConnectionHeader(false)
     , m_sentContentLengthHeader(false)
     , m_sentTransferEncodingHeader(false)
+    , m_sentDate(false)
     , m_keepAlive(true)
     , m_last(false)
     , m_useChunkedEncoding(false)
@@ -79,6 +82,10 @@ void QHttpResponse::writeHeaders()
         {
             m_sentContentLengthHeader = true;
         }
+        else if( name.compare("date", Qt::CaseInsensitive) == 0 )
+        {
+            m_sentDate = true;
+        }
         //TODO: Expect case
 
         writeHeader(name.toAscii(), value.toAscii());
@@ -104,6 +111,11 @@ void QHttpResponse::writeHeaders()
             writeHeader("Transfer-Encoding", "chunked");
         else
             m_last = true;
+    }
+
+    if( !m_sentDate )
+    {
+        writeHeader("Date", QDateTime::currentDateTimeUtc().toString("ddd, dd MMM yyyy hh:mm:ss G'M'T"));
     }
 }
 

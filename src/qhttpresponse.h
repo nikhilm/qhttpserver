@@ -118,6 +118,7 @@ private:
     bool m_sentConnectionHeader;
     bool m_sentContentLengthHeader;
     bool m_sentTransferEncodingHeader;
+    bool m_sentDate;
     bool m_keepAlive;
     bool m_last;
     bool m_useChunkedEncoding;
