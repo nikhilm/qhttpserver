@@ -106,6 +106,7 @@ private:
     QHttpResponse(QHttpConnection *connection);
 
     void writeHeaders();
+    void writeHeader(const char *field, const QString &value);
 
 private:
     QHttpConnection *m_connection;
