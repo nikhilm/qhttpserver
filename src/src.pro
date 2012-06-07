@@ -1,3 +1,4 @@
+include(../qhttpserver.pri)
 QHTTPSERVER_BASE = ..
 TEMPLATE = lib
 
@@ -22,5 +23,7 @@ OBJECTS_DIR = $$QHTTPSERVER_BASE/build
 MOC_DIR = $$QHTTPSERVER_BASE/build
 DESTDIR = $$QHTTPSERVER_BASE/lib
 
-target.path = $$QHTTPSERVER_BASE/lib
-INSTALLS += target
+target.path = $$LIBDIR
+headers.path = $$INCLUDEDIR
+headers.files = $$PUBLIC_HEADERS
+INSTALLS += target headers

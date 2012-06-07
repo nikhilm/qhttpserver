@@ -19,6 +19,11 @@ To link to your projects put this in your project's qmake project file
 
     LIBS += -lqhttpserver
 
+By default, the installation prefix is /usr/local. To change that to /usr,
+for example, run:
+
+    qmake -r PREFIX=/usr
+
 Usage
 -----
 
