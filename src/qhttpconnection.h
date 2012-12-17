@@ -55,10 +55,7 @@ private slots:
 
 private:
     static int MessageBegin(http_parser *parser);
-    static int Path(http_parser *parser, const char *at, size_t length);
-    static int QueryString(http_parser *parser, const char *at, size_t length);
     static int Url(http_parser *parser, const char *at, size_t length);
-    static int Fragment(http_parser *parser, const char *at, size_t length);
     static int HeaderField(http_parser *parser, const char *at, size_t length);
     static int HeaderValue(http_parser *parser, const char *at, size_t length);
     static int HeadersComplete(http_parser *parser);

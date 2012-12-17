@@ -40,11 +40,7 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     http_parser_init(m_parser, HTTP_REQUEST);
 
     m_parserSettings.on_message_begin = MessageBegin;
-    m_parserSettings.on_path = Path;
-    m_parserSettings.on_query_string = 0;
-    //m_parserSettings.on_query_string = QueryString;
     m_parserSettings.on_url = Url;
-    m_parserSettings.on_fragment = Fragment;
     m_parserSettings.on_header_field = HeaderField;
     m_parserSettings.on_header_value = HeaderValue;
     m_parserSettings.on_headers_complete = HeadersComplete;
@@ -166,40 +162,13 @@ int QHttpConnection::MessageComplete(http_parser *parser)
     return 0;
 }
 
-int QHttpConnection::Path(http_parser *parser, const char *at, size_t length)
-{
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
-    Q_ASSERT(theConnection->m_request);
-    QString path = QString::fromAscii(at, length);
-
-    QUrl url = theConnection->m_request->url();
-    url.setPath(path);
-    theConnection->m_request->setUrl(url);
-    return 0;
-}
-
-int QHttpConnection::QueryString(http_parser *parser, const char *at, size_t length)
-{
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
-    Q_ASSERT(theConnection->m_request);
-
-    Q_ASSERT(false);
-    return 0;
-}
-
 int QHttpConnection::Url(http_parser *parser, const char *at, size_t length)
 {
-//    qDebug() << "URL CALL" << QString::fromAscii(at, length);
-//    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
-//    theConnection->m_request->m_url->setPath(QString::fromAscii(at, length));
+    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    Q_ASSERT(theConnection->m_request);
 
-    return 0;
-}
-
-int QHttpConnection::Fragment(http_parser *parser, const char *at, size_t length)
-{
-    // TODO: Implement
-    Q_ASSERT(false);
+    QString url = QString::fromAscii(at, length);
+    theConnection->m_request->setUrl(QUrl(url));
     return 0;
 }
 
