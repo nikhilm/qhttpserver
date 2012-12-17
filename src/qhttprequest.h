@@ -35,6 +35,8 @@ class QHttpConnection;
 
 typedef QHash<QString, QString> HeaderHash;
 
+/* Request Methods */
+
 /*! \class QHttpRequest
  *
  * The QHttpRequest class represents the header and data
@@ -169,6 +171,29 @@ public:
      */
     quint16 remotePort() const { return m_remotePort; };
 
+    /*!
+     * Post data
+     */
+    const QByteArray &body() const { return m_body; }
+
+    /*!
+     * Set immediately before end has been emitted,
+     * stating whether the message was properly received.
+     * Defaults to false untiil the message has completed.
+     */
+    bool successful() const { return m_success; }
+
+    /*!
+     * connect to data and store all data in a QByteArray
+     * accessible at body()
+     */
+    void storeBody()
+    {
+      connect(this, SIGNAL(data(const QByteArray &)),
+          this, SLOT(appendBody(const QByteArray &)),
+          Qt::UniqueConnection);
+    }
+
 signals:
     /*!
      * This signal is emitted whenever body data is encountered
@@ -196,6 +221,7 @@ private:
     void setVersion(const QString &version) { m_version = version; }
     void setUrl(const QUrl &url) { m_url = url; }
     void setHeaders(const HeaderHash headers) { m_headers = headers; }
+    void setSuccessful(bool success) { m_succes = success; }
 
     QHttpConnection *m_connection;
     HeaderHash m_headers;
@@ -204,8 +230,16 @@ private:
     QString m_version;
     QString m_remoteAddress;
     quint16 m_remotePort;
+    QByteArray m_body;
+    bool m_succes;
 
     friend class QHttpConnection;
+
+    private slots:
+      void appendBody(const QByteArray &body)
+      {
+        m_body.append(body);
+      }
 };
 
 #endif

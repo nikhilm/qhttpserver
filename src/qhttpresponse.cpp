@@ -39,6 +39,7 @@ QHttpResponse::QHttpResponse(QHttpConnection *connection)
     , m_keepAlive(true)
     , m_last(false)
     , m_useChunkedEncoding(false)
+    , m_finished(false)
 {
 }
 
@@ -48,11 +49,19 @@ QHttpResponse::~QHttpResponse()
 
 void QHttpResponse::setHeader(const QString &field, const QString &value)
 {
+    if(m_finished) {
+      return;
+    }
+
     m_headers[field] = value;
 }
 
 void QHttpResponse::writeHeader(const char *field, const QString &value)
 {
+    if(m_finished) {
+      return;
+    }
+
     m_connection->write(field);
     m_connection->write(": ");
     m_connection->write(value.toUtf8());
@@ -61,6 +70,10 @@ void QHttpResponse::writeHeader(const char *field, const QString &value)
 
 void QHttpResponse::writeHeaders()
 {
+    if(m_finished) {
+      return;
+    }
+
     foreach(QString name, m_headers.keys())
     {
         QString value = m_headers[name];
@@ -121,6 +134,10 @@ void QHttpResponse::writeHeaders()
 
 void QHttpResponse::writeHead(int status)
 {
+    if(m_finished) {
+      return;
+    }
+
     if( m_headerWritten ) return;
 
     m_connection->write(QString("HTTP/1.1 %1 %2\r\n").arg(status).arg(STATUS_CODES[status]).toAscii());
@@ -133,6 +150,10 @@ void QHttpResponse::writeHead(int status)
 
 void QHttpResponse::write(const QByteArray &data)
 {
+    if(m_finished) {
+      return;
+    }
+
     if( !m_headerWritten )
     {
         qDebug() << "You MUST call writeHead() before writing body data";
@@ -144,14 +165,29 @@ void QHttpResponse::write(const QByteArray &data)
 
 void QHttpResponse::write(const QString &data)
 {
+    if(m_finished) {
+      return;
+    }
+
     m_connection->write(data.toUtf8());
 }
 
 void QHttpResponse::end(const QString &data)
 {
+    if(m_finished) {
+      return;
+    }
+    m_finished = true;
+
     write(data);
 
     emit done();
     deleteLater();
     // TODO: end connection and delete ourselves
+}
+
+void QHttpResponse::connectionClosed()
+{
+  m_finished = true;
+  deleteLater();
 }

@@ -108,7 +108,6 @@ private:
     void writeHeaders();
     void writeHeader(const char *field, const QString &value);
 
-private:
     QHttpConnection *m_connection;
 
     bool m_headerWritten;
@@ -122,6 +121,11 @@ private:
     bool m_keepAlive;
     bool m_last;
     bool m_useChunkedEncoding;
+    bool m_finished;
+
+private slots:
+    void connectionClosed();
+
 };
 
 #endif

@@ -33,6 +33,7 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     : QObject(parent)
     , m_socket(socket)
     , m_parser(0)
+    , m_request(0)
 {
     qDebug() << "Got new connection" << socket->peerAddress() << socket->peerPort();
 
@@ -50,7 +51,7 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     m_parser->data = this;
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(parseRequest()));
-    connect(socket, SIGNAL(disconnected()), this, SLOT(deleteLater()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
 }
 
 QHttpConnection::~QHttpConnection()
@@ -60,6 +61,19 @@ QHttpConnection::~QHttpConnection()
 
     free(m_parser);
     m_parser = 0;
+}
+
+void QHttpConnection::socketDisconnected()
+{
+    if(m_request) {
+        if(m_request->successful()) {
+          return;
+        }
+        m_request->setSuccessful(false);
+        emit m_request->end();
+    }
+
+    deleteLater();
 }
 
 void QHttpConnection::parseRequest()
@@ -144,6 +158,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     if( parser->http_major < 1 || parser->http_minor < 1 )
         response->m_keepAlive = false;
 
+    connect(theConnection, SIGNAL(destroyed()), response, SLOT(connectionClosed()));
     connect(response, SIGNAL(done()), theConnection, SLOT(responseDone()));
 
     // we are good to go!
@@ -157,6 +172,7 @@ int QHttpConnection::MessageComplete(http_parser *parser)
     QHttpConnection *theConnection = (QHttpConnection *)parser->data;
     Q_ASSERT(theConnection->m_request);
 
+    theConnection->m_request->setSuccessful(true);
     emit theConnection->m_request->end();
     return 0;
 }
