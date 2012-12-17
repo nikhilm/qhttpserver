@@ -117,8 +117,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     Q_ASSERT(theConnection->m_request);
 
     /** set method **/
-    QString method = QString::fromAscii(http_method_str((enum http_method) parser->method));
-    theConnection->m_request->setMethod(method);
+    theConnection->m_request->setMethod(static_cast<QHttpRequest::HttpMethod>(parser->method));
 
     /** set version **/
     theConnection->m_request->setVersion(QString("%1.%2").arg(parser->http_major).arg(parser->http_minor));

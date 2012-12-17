@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QMetaEnum>
 #include <QMetaType>
 #include <QUrl>
 
@@ -60,26 +61,58 @@ class QHttpRequest : public QObject
     Q_PROPERTY(QUrl    url           READ url);
     Q_PROPERTY(QString path          READ path);
     Q_PROPERTY(QString httpVersion   READ httpVersion);
+    Q_ENUMS(HttpMethod);
 
 public:
     virtual ~QHttpRequest();
 
     /*!
-     * The method used for the request.
-     *
-     * \returns One of the following strings:
-     * <ul>
-     * <li>DELETE</li>
-     * <li>GET</li>
-     * <li>HEAD</li>
-     * <li>POST</li>
-     * <li>PUT</li>
-     * <li>CONNECT</li>
-     * <li>OPTIONS</li>
-     * <li>TRACE</li>
-     * </ul>
+     * Request Methods
+     * Taken from http_parser.h -- make sure to keep synced
      */
-    const QString& method() const { return m_method; };
+    enum HttpMethod {
+      HTTP_DELETE = 0,
+      HTTP_GET,
+      HTTP_HEAD,
+      HTTP_POST,
+      HTTP_PUT,
+      /* pathological */
+      HTTP_CONNECT,
+      HTTP_OPTIONS,
+      HTTP_TRACE,
+      /* webdav */
+      HTTP_COPY,
+      HTTP_LOCK,
+      HTTP_MKCOL,
+      HTTP_MOVE,
+      HTTP_PROPFIND,
+      HTTP_PROPPATCH,
+      HTTP_SEARCH,
+      HTTP_UNLOCK,
+      /* subversion */
+      HTTP_REPORT,
+      HTTP_MKACTIVITY,
+      HTTP_CHECKOUT,
+      HTTP_MERGE,
+      /* upnp */
+      HTTP_MSEARCH,
+      HTTP_NOTIFY,
+      HTTP_SUBSCRIBE,
+      HTTP_UNSUBSCRIBE,
+      /* RFC-5789 */
+      HTTP_PATCH,
+      HTTP_PURGE
+    };
+
+    /*!
+     * Returns the method string for the request
+     */
+    const QString methodString() const { return MethodToString(method()); }
+
+    /*!
+     * The method used for the request.
+     */
+    HttpMethod method() const { return m_method; };
 
     /*!
      * The complete URL for the request. This
@@ -153,14 +186,20 @@ signals:
 private:
     QHttpRequest(QHttpConnection *connection, QObject *parent = 0);
 
-    void setMethod(const QString &method) { m_method = method; }
+    static QString MethodToString(HttpMethod method)
+    {
+      int index = staticMetaObject.indexOfEnumerator("HttpMethod");
+      return staticMetaObject.enumerator(index).valueToKey(method);
+    }
+
+    void setMethod(HttpMethod method) { m_method = method; }
     void setVersion(const QString &version) { m_version = version; }
     void setUrl(const QUrl &url) { m_url = url; }
     void setHeaders(const HeaderHash headers) { m_headers = headers; }
 
     QHttpConnection *m_connection;
     HeaderHash m_headers;
-    QString m_method;
+    HttpMethod m_method;
     QUrl m_url;
     QString m_version;
     QString m_remoteAddress;
