@@ -137,6 +137,11 @@ public:
      */
     bool listen(quint16 port);
 
+    /*!
+     * Stop listening for connections
+     */
+    void close();
+
 signals:
     /*!
      * This signal is emitted whenever a client

@@ -118,3 +118,8 @@ bool QHttpServer::listen(quint16 port)
 {
     return listen(QHostAddress::Any, port);
 }
+
+void QHttpServer::close()
+{
+  m_tcpServer->close();
+}
