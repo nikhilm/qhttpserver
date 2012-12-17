@@ -82,16 +82,8 @@ void QHttpConnection::parseRequest()
 
     while(m_socket->bytesAvailable())
     {
-        QByteArray arr = m_socket->read(80*1024);
-
-        if( arr.size() < 0 ) {
-            // TODO
-        }
-        else {
-            int nparsed = http_parser_execute(m_parser, &m_parserSettings, arr.data(), arr.size());
-            if( nparsed != arr.size() ) {
-            }
-        }
+        QByteArray arr = m_socket->readAll();
+        http_parser_execute(m_parser, &m_parserSettings, arr.constData(), arr.size());
     }
 }
 
