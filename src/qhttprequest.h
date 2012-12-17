@@ -221,7 +221,7 @@ private:
     void setVersion(const QString &version) { m_version = version; }
     void setUrl(const QUrl &url) { m_url = url; }
     void setHeaders(const HeaderHash headers) { m_headers = headers; }
-    void setSuccessful(bool success) { m_succes = success; }
+    void setSuccessful(bool success) { m_success = success; }
 
     QHttpConnection *m_connection;
     HeaderHash m_headers;
@@ -231,7 +231,7 @@ private:
     QString m_remoteAddress;
     quint16 m_remotePort;
     QByteArray m_body;
-    bool m_succes;
+    bool m_success;
 
     friend class QHttpConnection;
 

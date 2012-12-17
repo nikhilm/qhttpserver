@@ -51,7 +51,6 @@ signals:
 
 private slots:
     void parseRequest();
-    void responseDone();
     void socketDisconnected();
 
 private:

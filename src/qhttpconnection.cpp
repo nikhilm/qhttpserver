@@ -105,15 +105,6 @@ void QHttpConnection::flush()
     m_socket->flush();
 }
 
-void QHttpConnection::responseDone()
-{
-    QHttpResponse *response = qobject_cast<QHttpResponse*>(QObject::sender());
-    if( response->m_last )
-    {
-        m_socket->disconnectFromHost();
-    }
-}
-
 /********************
  * Static Callbacks *
  *******************/
@@ -148,6 +139,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     else {
         // TODO: abort with 400
     }
+
     theConnection->m_request->setHeaders(theConnection->m_currentHeaders);
 
     /** set client information **/
@@ -159,7 +151,6 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
         response->m_keepAlive = false;
 
     connect(theConnection, SIGNAL(destroyed()), response, SLOT(connectionClosed()));
-    connect(response, SIGNAL(done()), theConnection, SLOT(responseDone()));
 
     // we are good to go!
     emit theConnection->newRequest(theConnection->m_request, response);
