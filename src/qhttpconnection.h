@@ -23,19 +23,12 @@
 #ifndef Q_HTTP_CONNECTION
 #define Q_HTTP_CONNECTION
 
+#include "qhttpserverapi.h"
+#include "qhttpserverfwd.h"
+
 #include <QObject>
-#include <QHash>
 
-#include <http_parser.h>
-
-class QTcpSocket;
-
-class QHttpRequest;
-class QHttpResponse;
-
-typedef QHash<QString, QString> HeaderHash;
-
-class QHttpConnection : public QObject
+class QHTTPSERVER_API QHttpConnection : public QObject
 {
     Q_OBJECT
 
@@ -64,7 +57,7 @@ private:
 
 private:
     QTcpSocket *m_socket;
-    http_parser_settings m_parserSettings;
+    http_parser_settings *m_parserSettings;
     http_parser *m_parser;
 
     // since there can only be one request at any time
