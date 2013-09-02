@@ -65,3 +65,4 @@ Contributors
 
 * Nikhil Marathe (maintainer)
 * David Wolinsy
+* Jonne Nauha (Windows build fixes)
