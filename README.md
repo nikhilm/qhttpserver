@@ -11,7 +11,7 @@ anything complex**
 Installation
 ------------
 
-Requires Qt 4.
+Requires Qt 4 or Qt 5.
 
     qmake && make && su -c 'make install'
 
