@@ -121,5 +121,7 @@ bool QHttpServer::listen(quint16 port)
 
 void QHttpServer::close()
 {
-  m_tcpServer->close();
+    if(m_tcpServer) {
+        m_tcpServer->close();
+    }
 }
