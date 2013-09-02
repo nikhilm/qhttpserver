@@ -50,7 +50,7 @@ void Responder::accumulate(const QByteArray &data)
 
 void Responder::reply()
 {
-    m_resp->end(QString("</p></body></html>").toAscii());
+    m_resp->end(QString("</p></body></html>").toLatin1());
 }
 
 BodyData::BodyData()

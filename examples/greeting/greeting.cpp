@@ -26,7 +26,7 @@ void Greeting::handle(QHttpRequest *req, QHttpResponse *resp)
         QString name = exp.capturedTexts()[1];
 
         QString reply = tr("<html><head><title>Greeting App</title></head><body><h1>Hello %1!</h1></body></html>");
-        resp->end(reply.arg(name).toAscii());
+        resp->end(reply.arg(name).toLatin1());
     }
     else
     {
