@@ -27,18 +27,11 @@
 #define QHTTPSERVER_VERSION_MINOR 1
 #define QHTTPSERVER_VERSION_PATCH 0
 
+#include "qhttpserverapi.h"
+#include "qhttpserverfwd.h"
+
 #include <QObject>
 #include <QHostAddress>
-
-class QTcpServer;
-
-class QHttpRequest;
-class QHttpResponse;
-
-/*!
- * A map of request or response headers
- */
-typedef QHash<QString, QString> HeaderHash;
 
 /*!
  * Maps status codes to string reason phrases
@@ -105,7 +98,7 @@ extern QHash<int, QString> STATUS_CODES;
  * \include helloworld/helloworld.h
  *
  */
-class QHttpServer : public QObject
+class QHTTPSERVER_API QHttpServer : public QObject
 {
     Q_OBJECT
 

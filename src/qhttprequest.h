@@ -23,17 +23,13 @@
 #ifndef Q_HTTP_REQUEST
 #define Q_HTTP_REQUEST
 
+#include "qhttpserverapi.h"
+#include "qhttpserverfwd.h"
+
 #include <QObject>
-#include <QHash>
 #include <QMetaEnum>
 #include <QMetaType>
 #include <QUrl>
-
-class QTcpSocket;
-
-class QHttpConnection;
-
-typedef QHash<QString, QString> HeaderHash;
 
 /* Request Methods */
 
@@ -52,7 +48,7 @@ typedef QHash<QString, QString> HeaderHash;
  *
  * The class is <strong>read-only</strong> by users of %QHttpServer.
  */
-class QHttpRequest : public QObject
+class QHTTPSERVER_API QHttpRequest : public QObject
 {
     Q_OBJECT
 
@@ -73,37 +69,37 @@ public:
      * Taken from http_parser.h -- make sure to keep synced
      */
     enum HttpMethod {
-      HTTP_DELETE = 0,
-      HTTP_GET,
-      HTTP_HEAD,
-      HTTP_POST,
-      HTTP_PUT,
-      /* pathological */
-      HTTP_CONNECT,
-      HTTP_OPTIONS,
-      HTTP_TRACE,
-      /* webdav */
-      HTTP_COPY,
-      HTTP_LOCK,
-      HTTP_MKCOL,
-      HTTP_MOVE,
-      HTTP_PROPFIND,
-      HTTP_PROPPATCH,
-      HTTP_SEARCH,
-      HTTP_UNLOCK,
-      /* subversion */
-      HTTP_REPORT,
-      HTTP_MKACTIVITY,
-      HTTP_CHECKOUT,
-      HTTP_MERGE,
-      /* upnp */
-      HTTP_MSEARCH,
-      HTTP_NOTIFY,
-      HTTP_SUBSCRIBE,
-      HTTP_UNSUBSCRIBE,
-      /* RFC-5789 */
-      HTTP_PATCH,
-      HTTP_PURGE
+        HTTP_DELETE = 0,
+        HTTP_GET,
+        HTTP_HEAD,
+        HTTP_POST,
+        HTTP_PUT,
+        /* pathological */
+        HTTP_CONNECT,
+        HTTP_OPTIONS,
+        HTTP_TRACE,
+        /* webdav */
+        HTTP_COPY,
+        HTTP_LOCK,
+        HTTP_MKCOL,
+        HTTP_MOVE,
+        HTTP_PROPFIND,
+        HTTP_PROPPATCH,
+        HTTP_SEARCH,
+        HTTP_UNLOCK,
+        /* subversion */
+        HTTP_REPORT,
+        HTTP_MKACTIVITY,
+        HTTP_CHECKOUT,
+        HTTP_MERGE,
+        /* upnp */
+        HTTP_MSEARCH,
+        HTTP_NOTIFY,
+        HTTP_SUBSCRIBE,
+        HTTP_UNSUBSCRIBE,
+        /* RFC-5789 */
+        HTTP_PATCH,
+        HTTP_PURGE
     };
 
     /*!
@@ -189,9 +185,9 @@ public:
      */
     void storeBody()
     {
-      connect(this, SIGNAL(data(const QByteArray &)),
-          this, SLOT(appendBody(const QByteArray &)),
-          Qt::UniqueConnection);
+        connect(this, SIGNAL(data(const QByteArray &)),
+            this, SLOT(appendBody(const QByteArray &)),
+            Qt::UniqueConnection);
     }
 
 signals:
@@ -213,8 +209,8 @@ private:
 
     static QString MethodToString(HttpMethod method)
     {
-      int index = staticMetaObject.indexOfEnumerator("HttpMethod");
-      return staticMetaObject.enumerator(index).valueToKey(method);
+        int index = staticMetaObject.indexOfEnumerator("HttpMethod");
+        return staticMetaObject.enumerator(index).valueToKey(method);
     }
 
     void setMethod(HttpMethod method) { m_method = method; }
@@ -235,11 +231,11 @@ private:
 
     friend class QHttpConnection;
 
-    private slots:
-      void appendBody(const QByteArray &body)
-      {
+private slots:
+    void appendBody(const QByteArray &body)
+    {
         m_body.append(body);
-      }
+    }
 };
 
 #endif

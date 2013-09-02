@@ -29,10 +29,13 @@
 #include "qhttprequest.h"
 #include "qhttpresponse.h"
 
+#include <http_parser.h>
+
 QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     : QObject(parent)
     , m_socket(socket)
     , m_parser(0)
+    , m_parserSettings(0)
     , m_request(0)
 {
     qDebug() << "Got new connection" << socket->peerAddress() << socket->peerPort();
@@ -40,13 +43,14 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     m_parser = (http_parser*)malloc(sizeof(http_parser));
     http_parser_init(m_parser, HTTP_REQUEST);
 
-    m_parserSettings.on_message_begin = MessageBegin;
-    m_parserSettings.on_url = Url;
-    m_parserSettings.on_header_field = HeaderField;
-    m_parserSettings.on_header_value = HeaderValue;
-    m_parserSettings.on_headers_complete = HeadersComplete;
-    m_parserSettings.on_body = Body;
-    m_parserSettings.on_message_complete = MessageComplete;
+    m_parserSettings = new http_parser_settings();
+    m_parserSettings->on_message_begin = MessageBegin;
+    m_parserSettings->on_url = Url;
+    m_parserSettings->on_header_field = HeaderField;
+    m_parserSettings->on_header_value = HeaderValue;
+    m_parserSettings->on_headers_complete = HeadersComplete;
+    m_parserSettings->on_body = Body;
+    m_parserSettings->on_message_complete = MessageComplete;
 
     m_parser->data = this;
 
@@ -61,6 +65,9 @@ QHttpConnection::~QHttpConnection()
 
     free(m_parser);
     m_parser = 0;
+
+    delete m_parserSettings;
+    m_parserSettings = 0;
 }
 
 void QHttpConnection::socketDisconnected()
@@ -83,7 +90,7 @@ void QHttpConnection::parseRequest()
     while(m_socket->bytesAvailable())
     {
         QByteArray arr = m_socket->readAll();
-        http_parser_execute(m_parser, &m_parserSettings, arr.constData(), arr.size());
+        http_parser_execute(m_parser, m_parserSettings, arr.constData(), arr.size());
     }
 }
 
@@ -154,7 +161,7 @@ int QHttpConnection::Url(http_parser *parser, const char *at, size_t length)
     QHttpConnection *theConnection = (QHttpConnection *)parser->data;
     Q_ASSERT(theConnection->m_request);
 
-    QString url = QString::fromAscii(at, length);
+    QString url = QString::fromLatin1(at, length);
     theConnection->m_request->setUrl(QUrl(url));
     return 0;
 }
@@ -177,7 +184,7 @@ int QHttpConnection::HeaderField(http_parser *parser, const char *at, size_t len
         theConnection->m_currentHeaderValue = QString();
     }
 
-    QString fieldSuffix = QString::fromAscii(at, length);
+    QString fieldSuffix = QString::fromLatin1(at, length);
     theConnection->m_currentHeaderField += fieldSuffix;
     return 0;
 }
@@ -187,7 +194,7 @@ int QHttpConnection::HeaderValue(http_parser *parser, const char *at, size_t len
     QHttpConnection *theConnection = (QHttpConnection *)parser->data;
     Q_ASSERT(theConnection->m_request);
 
-    QString valueSuffix = QString::fromAscii(at, length);
+    QString valueSuffix = QString::fromLatin1(at, length);
     theConnection->m_currentHeaderValue += valueSuffix;
     return 0;
 }
