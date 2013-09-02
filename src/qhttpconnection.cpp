@@ -26,10 +26,9 @@
 #include <QHostAddress>
 #include <QDebug>
 
+#include "http_parser.h"
 #include "qhttprequest.h"
 #include "qhttpresponse.h"
-
-#include <http_parser.h>
 
 QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     : QObject(parent)
