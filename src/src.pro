@@ -8,7 +8,7 @@ VERSION = 0.1.0
 QT += network
 QT -= gui
 
-CONFIG += dll debug
+CONFIG += dll
 
 INCLUDEPATH += $$QHTTPSERVER_BASE/http-parser
 
