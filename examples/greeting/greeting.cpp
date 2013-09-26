@@ -31,7 +31,7 @@ void Greeting::handle(QHttpRequest *req, QHttpResponse *resp)
     else
     {
         resp->writeHead(403);
-        resp->end(QStringLiteral("You aren't allowed here!"));
+        resp->end(QLatin1String("You aren't allowed here!"));
     }
 }
 
