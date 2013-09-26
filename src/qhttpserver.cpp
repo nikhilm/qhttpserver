@@ -99,7 +99,9 @@ QHttpServer::~QHttpServer()
 void QHttpServer::newConnection()
 {
     Q_ASSERT(m_tcpServer);
-    while(m_tcpServer->hasPendingConnections()) {
+
+    while(m_tcpServer->hasPendingConnections())
+    {
         QHttpConnection *connection = new QHttpConnection(m_tcpServer->nextPendingConnection(), this);
         connect(connection, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),
                 this, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)));
@@ -121,7 +123,6 @@ bool QHttpServer::listen(quint16 port)
 
 void QHttpServer::close()
 {
-    if(m_tcpServer) {
+    if (m_tcpServer)
         m_tcpServer->close();
-    }
 }

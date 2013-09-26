@@ -71,10 +71,11 @@ QHttpConnection::~QHttpConnection()
 
 void QHttpConnection::socketDisconnected()
 {
-    if(m_request) {
-        if(m_request->successful()) {
-          return;
-        }
+    if (m_request)
+    {
+        if (m_request->successful())
+            return;
+
         m_request->setSuccessful(false);
         emit m_request->end();
     }
@@ -106,17 +107,17 @@ void QHttpConnection::flush()
 void QHttpConnection::responseDone()
 {
     QHttpResponse *response = qobject_cast<QHttpResponse*>(QObject::sender());
-    if (response->m_last) {
+    if (response->m_last)
         m_socket->disconnectFromHost();
-    }
 }
 
 /********************
  * Static Callbacks *
  *******************/
+
 int QHttpConnection::MessageBegin(http_parser *parser)
 {
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     theConnection->m_currentHeaders.clear();
     theConnection->m_request = new QHttpRequest(theConnection);
     return 0;
@@ -124,7 +125,7 @@ int QHttpConnection::MessageBegin(http_parser *parser)
 
 int QHttpConnection::HeadersComplete(http_parser *parser)
 {
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     Q_ASSERT(theConnection->m_request);
 
     /** set method **/
@@ -142,7 +143,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     theConnection->m_request->m_remotePort = theConnection->m_socket->peerPort();
 
     QHttpResponse *response = new QHttpResponse(theConnection);
-    if( parser->http_major < 1 || parser->http_minor < 1 )
+    if (parser->http_major < 1 || parser->http_minor < 1)
         response->m_keepAlive = false;
 
     connect(theConnection, SIGNAL(destroyed()), response, SLOT(connectionClosed()));
@@ -156,7 +157,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
 int QHttpConnection::MessageComplete(http_parser *parser)
 {
     // TODO: do cleanup and prepare for next request
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     Q_ASSERT(theConnection->m_request);
 
     theConnection->m_request->setSuccessful(true);
@@ -166,7 +167,7 @@ int QHttpConnection::MessageComplete(http_parser *parser)
 
 int QHttpConnection::Url(http_parser *parser, const char *at, size_t length)
 {
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     Q_ASSERT(theConnection->m_request);
 
     QString url = QString::fromLatin1(at, length);
@@ -176,12 +177,12 @@ int QHttpConnection::Url(http_parser *parser, const char *at, size_t length)
 
 int QHttpConnection::HeaderField(http_parser *parser, const char *at, size_t length)
 {
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     Q_ASSERT(theConnection->m_request);
 
     // insert the header we parsed previously
     // into the header map
-    if( !theConnection->m_currentHeaderField.isEmpty() && !theConnection->m_currentHeaderValue.isEmpty() )
+    if (!theConnection->m_currentHeaderField.isEmpty() && !theConnection->m_currentHeaderValue.isEmpty())
     {
         // header names are always lower-cased
         theConnection->m_currentHeaders[theConnection->m_currentHeaderField.toLower()] = theConnection->m_currentHeaderValue;
@@ -199,7 +200,7 @@ int QHttpConnection::HeaderField(http_parser *parser, const char *at, size_t len
 
 int QHttpConnection::HeaderValue(http_parser *parser, const char *at, size_t length)
 {
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     Q_ASSERT(theConnection->m_request);
 
     QString valueSuffix = QString::fromLatin1(at, length);
@@ -209,7 +210,7 @@ int QHttpConnection::HeaderValue(http_parser *parser, const char *at, size_t len
 
 int QHttpConnection::Body(http_parser *parser, const char *at, size_t length)
 {
-    QHttpConnection *theConnection = (QHttpConnection *)parser->data;
+    QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     Q_ASSERT(theConnection->m_request);
 
     emit theConnection->m_request->data(QByteArray(at, length));
