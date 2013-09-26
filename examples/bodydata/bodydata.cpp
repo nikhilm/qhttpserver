@@ -63,7 +63,7 @@ BodyData::BodyData()
 
 void BodyData::handle(QHttpRequest *req, QHttpResponse *resp)
 {
-    Responder *r = new Responder(req, resp);
+    new Responder(req, resp);
 }
 
 int main(int argc, char **argv)
