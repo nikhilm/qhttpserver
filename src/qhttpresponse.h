@@ -124,7 +124,12 @@ public slots:
      * This will emit done() and queue this object
      * for deletion. For details see \ref memorymanagement
      */
-    void end(const QString &data=QString());
+    void end(const QByteArray &data=QByteArray());
+
+    /*!
+     * End with a QString.
+     */
+    void end(const QString &data);
 
     /*!
      * Set a response header @c field to @c value
