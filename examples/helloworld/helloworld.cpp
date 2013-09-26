@@ -16,6 +16,7 @@ Hello::Hello()
 
 void Hello::handle(QHttpRequest *req, QHttpResponse *resp)
 {
+    Q_UNUSED(req);
     resp->setHeader("Content-Length", "11");
     resp->writeHead(200);
     resp->write(QString("Hello World"));
