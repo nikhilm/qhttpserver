@@ -1,9 +1,19 @@
-TARGET=helloworld
+TARGET = helloworld
+
 QT += network
 QT -= gui
 
-INCLUDEPATH += ../../src
-LIBS += -L../../lib -lqhttpserver
+CONFIG += debug
 
-SOURCES=helloworld.cpp
-HEADERS=helloworld.h
+INCLUDEPATH += ../../src
+LIBS += -L../../lib
+
+win32 {
+    debug: LIBS += -lqhttpserverd
+    else: LIBS += -lqhttpserver
+} else {
+    LIBS += -lqhttpserver
+}
+
+SOURCES = helloworld.cpp
+HEADERS = helloworld.h
