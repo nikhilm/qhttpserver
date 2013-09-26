@@ -1,4 +1,5 @@
 include(../qhttpserver.pri)
+
 QHTTPSERVER_BASE = ..
 TEMPLATE = lib
 
@@ -9,6 +10,8 @@ QT += network
 QT -= gui
 
 CONFIG += dll
+
+DEFINES += QHTTPSERVER_EXPORT
 
 INCLUDEPATH += $$QHTTPSERVER_BASE/http-parser
 
