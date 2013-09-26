@@ -165,11 +165,7 @@ void QHttpResponse::write(const QByteArray &data)
 
 void QHttpResponse::write(const QString &data)
 {
-    if(m_finished) {
-      return;
-    }
-
-    m_connection->write(data.toUtf8());
+    write(data.toUtf8());
 }
 
 void QHttpResponse::end(const QString &data)
