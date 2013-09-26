@@ -23,6 +23,7 @@
 #include "qhttpresponse.h"
 
 #include <QDateTime>
+#include <QLocale>
 
 #include "qhttpserver.h"
 #include "qhttpconnection.h"
@@ -119,9 +120,9 @@ void QHttpResponse::writeHeaders()
             m_last = true;
     }
 
-    /// @todo Fix this, it writes month and day in the operating system regions language.
+    // Sun, 06 Nov 1994 08:49:37 GMT - RFC 822. Use QLocale::c() so english is used for month and day.
     if (!m_sentDate)
-        writeHeader("Date", QDateTime::currentDateTimeUtc().toString("ddd, dd MMM yyyy hh:mm:ss") + " GMT");
+        writeHeader("Date", QLocale::c().toString(QDateTime::currentDateTimeUtc(), "ddd, dd MMM yyyy hh:mm:ss") + " GMT");
 }
 
 void QHttpResponse::writeHead(int status)
