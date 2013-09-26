@@ -177,10 +177,10 @@ void QHttpResponse::end(const QString &data)
     if(m_finished) {
       return;
     }
-    m_finished = true;
 
     write(data);
 
+    m_finished = true;
     emit done();
     deleteLater();
     // TODO: end connection and delete ourselves

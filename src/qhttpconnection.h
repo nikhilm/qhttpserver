@@ -44,6 +44,7 @@ signals:
 
 private slots:
     void parseRequest();
+    void responseDone();
     void socketDisconnected();
 
 private:
@@ -57,8 +58,8 @@ private:
 
 private:
     QTcpSocket *m_socket;
-    http_parser_settings *m_parserSettings;
     http_parser *m_parser;
+    http_parser_settings *m_parserSettings;
 
     // since there can only be one request at any time
     // even with pipelining
