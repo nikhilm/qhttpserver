@@ -110,12 +110,6 @@ public slots:
     void write(const QByteArray &data);
 
     /*!
-     * Write a QString instead of a QByteArray.
-     * \see write(const QByteArray &);
-     */
-    void write(const QString &data);
-
-    /*!
      * End the response. Data will be flushed
      * to the underlying socket and the connection
      * itself will be closed if this is the last
@@ -125,11 +119,6 @@ public slots:
      * for deletion. For details see \ref memorymanagement
      */
     void end(const QByteArray &data=QByteArray());
-
-    /*!
-     * End with a QString.
-     */
-    void end(const QString &data);
 
     /*!
      * Set a response header @c field to @c value

@@ -163,11 +163,6 @@ void QHttpResponse::write(const QByteArray &data)
     m_connection->write(data);
 }
 
-void QHttpResponse::write(const QString &data)
-{
-    write(data.toUtf8());
-}
-
 void QHttpResponse::end(const QByteArray &data)
 {
     if(m_finished) {
@@ -180,11 +175,6 @@ void QHttpResponse::end(const QByteArray &data)
     emit done();
     deleteLater();
     // TODO: end connection and delete ourselves
-}
-
-void QHttpResponse::end(const QString &data)
-{
-    end(data.toUtf8());
 }
 
 void QHttpResponse::connectionClosed()

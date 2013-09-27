@@ -21,13 +21,13 @@ Responder::Responder(QHttpRequest *req, QHttpResponse *resp)
         resp->writeHead(200);
         QString name = exp.capturedTexts()[1];
 
-        QString reply = tr("<html><head><title>BodyData App</title></head><body><h1>Hello  %1!</h1><p>").arg(name);
-        resp->write(reply);
+        QString reply = tr("<html><head><title>BodyData App</title></head><body><h1>Hello %1!</h1><p>").arg(name);
+        resp->write(reply.toUtf8());
     }
     else
     {
         resp->writeHead(403);
-        resp->end(QStringLiteral("You aren't allowed here!"));
+        resp->end(QByteArray("You aren't allowed here!"));
         // TODO: there should be a way to tell request to stop streaming data
         return;
     }
@@ -50,7 +50,7 @@ void Responder::accumulate(const QByteArray &data)
 
 void Responder::reply()
 {
-    m_resp->end(QStringLiteral("</p></body></html>"));
+    m_resp->end(QByteArray("</p></body></html>"));
 }
 
 BodyData::BodyData()
