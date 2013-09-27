@@ -5,7 +5,7 @@ TEMPLATE = lib
 
 TARGET = qhttpserver
 
-unix:VERSION = 0.1.0
+!win32:VERSION = 0.1.0
 
 QT += network
 QT -= gui
