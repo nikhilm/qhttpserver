@@ -14,5 +14,4 @@ win32 {
     LIBS += -lqhttpserver
 }
 
-INCLUDEPATH += .\
- 			   ../src
+INCLUDEPATH += ../src
