@@ -9,36 +9,52 @@
 #include <qhttprequest.h>
 #include <qhttpresponse.h>
 
+/// BodyData
+
+BodyData::BodyData()
+{
+    QHttpServer *server = new QHttpServer(this);
+    connect(server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),
+        this, SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
+        
+    server->listen(QHostAddress::Any, 5000);
+}
+
+void BodyData::handleRequest(QHttpRequest *req, QHttpResponse *resp)
+{
+    new Responder(req, resp);
+}
+
+/// Responder
+
 Responder::Responder(QHttpRequest *req, QHttpResponse *resp)
-    : QObject(0)
-    , m_req(req)
+    : m_req(req)
     , m_resp(resp)
 {
     QRegExp exp("^/user/([a-z]+$)");
-    if( exp.indexIn(req->path()) != -1 )
-    {
-        resp->setHeader("Content-Type", "text/html");
-        resp->writeHead(200);
-        QString name = exp.capturedTexts()[1];
-
-        QString reply = tr("<html><head><title>BodyData App</title></head><body><h1>Hello %1!</h1><p>").arg(name);
-        resp->write(reply.toUtf8());
-    }
-    else
+    if (exp.indexIn(req->path()) == -1)
     {
         resp->writeHead(403);
         resp->end(QByteArray("You aren't allowed here!"));
-        // TODO: there should be a way to tell request to stop streaming data
+        /// @todo There should be a way to tell request to stop streaming data
         return;
     }
+
+    resp->setHeader("Content-Type", "text/html");
+    resp->writeHead(200);
+    
+    QString name = exp.capturedTexts()[1];
+    QString bodyStart = tr("<html><head><title>BodyData App</title></head><body><h1>Hello %1!</h1><p>").arg(name);
+    resp->write(bodyStart.toUtf8());
+
     connect(m_req, SIGNAL(data(const QByteArray&)), this, SLOT(accumulate(const QByteArray&)));
-    connect(req, SIGNAL(end()), this, SLOT(reply()));
-    connect(resp, SIGNAL(done()), this, SLOT(deleteLater()));
+    connect(m_req, SIGNAL(end()), this, SLOT(reply()));
+    connect(m_resp, SIGNAL(done()), this, SLOT(deleteLater()));
 }
 
 Responder::~Responder()
 {
-    qDebug() << "DELETING" << m_req;
+    qDebug() << "Responder finished, deleting request:" << m_req;
     delete m_req;
     m_req = 0;
 }
@@ -53,24 +69,11 @@ void Responder::reply()
     m_resp->end(QByteArray("</p></body></html>"));
 }
 
-BodyData::BodyData()
-{
-    QHttpServer *server = new QHttpServer;
-    server->listen(QHostAddress::Any, 5000);
-    connect(server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),
-            this, SLOT(handle(QHttpRequest*, QHttpResponse*)));
-}
-
-void BodyData::handle(QHttpRequest *req, QHttpResponse *resp)
-{
-    new Responder(req, resp);
-}
+/// main
 
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
-
-    BodyData hello;
-    
+    BodyData bodydata;
     app.exec();
 }

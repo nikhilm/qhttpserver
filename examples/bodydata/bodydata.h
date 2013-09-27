@@ -1,29 +1,37 @@
+#include "qhttpserverfwd.h"
+
 #include <QObject>
 
-class QHttpRequest;
-class QHttpResponse;
+/// BodyData
 
 class BodyData : public QObject
 {
     Q_OBJECT
+
 public:
     BodyData();
 
 private slots:
-    void handle(QHttpRequest *req, QHttpResponse *resp);
+    void handleRequest(QHttpRequest *req, QHttpResponse *resp);
 };
+
+/// Responder
 
 class Responder : public QObject
 {
     Q_OBJECT
+
 public:
     Responder(QHttpRequest *req, QHttpResponse *resp);
     ~Responder();
+
 signals:
     void done();
+
 private slots:
-    void accumulate(const QByteArray&);
+    void accumulate(const QByteArray &data);
     void reply();
+
 private:
     QHttpRequest *m_req;
     QHttpResponse *m_resp;

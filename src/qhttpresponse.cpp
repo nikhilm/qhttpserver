@@ -146,6 +146,11 @@ void QHttpResponse::writeHead(int status)
     m_headerWritten = true;
 }
 
+void QHttpResponse::writeHead(StatusCode statusCode)
+{
+    writeHead(static_cast<int>(statusCode));
+}
+
 void QHttpResponse::write(const QByteArray &data)
 {
     if (m_finished)

@@ -30,6 +30,8 @@
 #include "qhttprequest.h"
 #include "qhttpresponse.h"
 
+/// @cond nodoc
+
 QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     : QObject(parent)
     , m_socket(socket)
@@ -216,3 +218,5 @@ int QHttpConnection::Body(http_parser *parser, const char *at, size_t length)
     emit theConnection->m_request->data(QByteArray(at, length));
     return 0;
 }
+
+/// @endcond
