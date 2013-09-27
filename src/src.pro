@@ -1,14 +1,22 @@
 include(../qhttpserver.pri)
+
 QHTTPSERVER_BASE = ..
 TEMPLATE = lib
 
 TARGET = qhttpserver
-VERSION = 0.1.0
+
+!win32:VERSION = 0.1.0
 
 QT += network
 QT -= gui
 
-CONFIG += dll
+CONFIG += dll debug_and_release
+
+CONFIG(debug, debug|release) {
+    win32: TARGET = $$join(TARGET,,,d)
+}
+
+DEFINES += QHTTPSERVER_EXPORT
 
 INCLUDEPATH += $$QHTTPSERVER_BASE/http-parser
 
