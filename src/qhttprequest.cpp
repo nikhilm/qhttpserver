@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Nikhil Marathe <nsm.nikhil@gmail.com>
+ * Copyright 2011-2013 Nikhil Marathe <nsm.nikhil@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
