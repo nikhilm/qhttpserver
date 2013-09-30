@@ -6,26 +6,32 @@
 #include <qhttprequest.h>
 #include <qhttpresponse.h>
 
-Hello::Hello()
+/// HelloWorld
+
+HelloWorld::HelloWorld()
 {
-    QHttpServer *server = new QHttpServer;
-    server->listen(QHostAddress::Any, 5000);
+    QHttpServer *server = new QHttpServer(this);
     connect(server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),
-            this, SLOT(handle(QHttpRequest*, QHttpResponse*)));
+            this, SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
+
+    server->listen(QHostAddress::Any, 8080);
 }
 
-void Hello::handle(QHttpRequest *req, QHttpResponse *resp)
+void HelloWorld::handleRequest(QHttpRequest *req, QHttpResponse *resp)
 {
     Q_UNUSED(req);
-    resp->setHeader("Content-Length", "11");
+
+    QByteArray body = "Hello World";
+    resp->setHeader("Content-Length", QString::number(body.size()));
     resp->writeHead(200);
-    resp->write(QByteArray("Hello World"));
-    resp->end();
+    resp->end(body);
 }
+
+/// main
 
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
-    Hello hello;
+    HelloWorld hello;
     app.exec();
 }

@@ -28,25 +28,22 @@
 
 #include <QObject>
 
-/*!
- * The QHttpResponse class handles sending
- * data back to the client in response to a request.
- *
- * The way to respond is to:
- * <ol>
- * <li>Set headers (optional).</li>
- * <li>Call writeHead() with the HTTP status code.</li>
- * <li>Call write() zero or more times.</li>
- * <li>Call end() when you are ready to end the request.</li>
- * </ol>
- *
- */
+/// The QHttpResponse class handles sending data back to the client as a response to a request.
+/** The steps to respond correctly are
+    <ol>
+        <li>Call setHeader() to set headers [optional]</li>
+        <li>Call writeHead() with the HTTP status code</li>
+        <li>Call write() zero or more times for body data.</li>
+        <li>Call end() when the resonse can be sent back</li>
+    </ol> */
 class QHTTPSERVER_API QHttpResponse : public QObject
 {
     Q_OBJECT
 
 public:
-    enum StatusCode {
+    /// HTTP status code.
+    enum StatusCode
+    {
         STATUS_CONTINUE = 100,
         STATUS_SWITCH_PROTOCOLS = 101,
         STATUS_OK = 200,
@@ -90,48 +87,48 @@ public:
     };
 
     virtual ~QHttpResponse();
+    
+    /// @cond nodoc
+    friend class QHttpConnection;
+    /// @endcond
 
 public slots:
-    /*!
-     * Write the header of the response
-     * using @c status as the response status
-     * code. Any headers should be set before this
-     * is called.
-     */
-    void writeHead(int status);
-
-    /*!
-     * Write the block of data to the client.
-     * 
-     * \note
-     * writeHead() has to be called before write(), otherwise the call will
-     * fail.
-     */
-    void write(const QByteArray &data);
-
-    /*!
-     * End the response. Data will be flushed
-     * to the underlying socket and the connection
-     * itself will be closed if this is the last
-     * response.
-     *
-     * This will emit done() and queue this object
-     * for deletion. For details see \ref memorymanagement
-     */
-    void end(const QByteArray &data=QByteArray());
-
-    /*!
-     * Set a response header @c field to @c value
-     */
+    /// Sets a response header @c field to @c value.
+    /** @note You must call this with all your custom headers
+        before calling writeHead(), write() or end().
+        @param field Header field to be set.
+        @param value Header value to be set. */
     void setHeader(const QString &field, const QString &value);
 
+    /// Writes the header section of the response 
+    /// using @c status as the response status code.
+    /** @param statusCode Status code for the response.
+        @note Any headers should be set before
+        invoking this function with setHeader(). */
+    void writeHead(int statusCode);
+    
+    /** @overload */
+    void writeHead(StatusCode statusCode);
+
+    /// Writes a block of @c data to the client.
+    /** @note writeHead() must be called before this function. */
+    void write(const QByteArray &data);
+
+    /// End/finish the response. 
+    /** Data will be flushed to the underlying socket 
+        and the connection itself will be closed if 
+        this is the last response.
+
+        This will emit done() and queue this object 
+        for deletion. For details see \ref memorymanagement.
+        @param data Optional data to be written before finishing. */
+    void end(const QByteArray &data = "");
+
 signals:
-    /*!
-     * Emitted once the response is finished.
-     * You should NOT interact with this object
-     * after done() has been emitted as the object
-     * is scheduled for deletion at any time.
-     */
+    /// Emitted when the response is finished.
+    /** You should <b>not</b> interact with this object
+        after done() has been emitted as the object
+        has already been scheduled for deletion. */
     void done();
 
 private:
@@ -142,10 +139,9 @@ private:
 
     QHttpConnection *m_connection;
 
-    bool m_headerWritten;
     HeaderHash m_headers;
-    friend class QHttpConnection;
 
+    bool m_headerWritten;
     bool m_sentConnectionHeader;
     bool m_sentContentLengthHeader;
     bool m_sentTransferEncodingHeader;
@@ -157,7 +153,6 @@ private:
 
 private slots:
     void connectionClosed();
-
 };
 
 #endif

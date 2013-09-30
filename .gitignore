@@ -1,10 +1,30 @@
+# Folders
 build
 lib
+
+# Generated
 Makefile
 *.o
 moc_*
-examples/helloworld/helloworld
+
+# Docs
 docs/html
-tests/tests
-examples/greeting/greeting
-examples/bodydata/bodydata
+
+# Build folders
+*/debug
+*/release
+*/*/debug
+*/*/release
+
+# Visual studio
+*.suo
+*.ncb
+*.user
+*.pdb
+*.idb
+*.vcproj
+*.vcxproj
+*.vcxproj.filters
+*.lib
+*.sln
+*.rc

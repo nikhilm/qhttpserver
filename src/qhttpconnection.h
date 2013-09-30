@@ -28,6 +28,8 @@
 
 #include <QObject>
 
+/// @cond nodoc
+
 class QHTTPSERVER_API QHttpConnection : public QObject
 {
     Q_OBJECT
@@ -61,14 +63,15 @@ private:
     http_parser *m_parser;
     http_parser_settings *m_parserSettings;
 
-    // since there can only be one request at any time
-    // even with pipelining
+    // Since there can only be one request at any time even with pipelining.
     QHttpRequest *m_request;
 
-    // the ones we are reading in from the parser
+    // The ones we are reading in from the parser
     HeaderHash m_currentHeaders;
     QString m_currentHeaderField;
     QString m_currentHeaderValue;
 };
+
+/// @endcond
 
 #endif

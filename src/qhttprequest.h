@@ -31,54 +31,49 @@
 #include <QMetaType>
 #include <QUrl>
 
-/* Request Methods */
+/// The QHttpRequest class represents the header and body data sent by the client.
+/** The requests header data is available immediately. Body data is streamed as 
+    it comes in via the data() signal. As a consequence the application's request 
+    callback should ensure that it connects to the data() signal before control 
+    returns back to the event loop. Otherwise there is a risk of some data never 
+    being received by the application.
 
-/*! \class QHttpRequest
- *
- * The QHttpRequest class represents the header and data
- * sent by the client.
- *
- * Header data is available immediately.
- *
- * Body data is streamed as it comes in via the data(const QByteArray&) signal.
- * As a consequence the application's request callback should ensure that it
- * connects to the data() signal before control returns back to the event loop.
- * Otherwise there is a risk of some data never being received by the
- * application.
- *
- * The class is <strong>read-only</strong> by users of %QHttpServer.
- */
+    The class is <b>read-only</b>. */
 class QHTTPSERVER_API QHttpRequest : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(HeaderHash headers    READ headers);
-    Q_PROPERTY(QString remoteAddress READ remoteAddress);
-    Q_PROPERTY(quint16 remotePort    READ remotePort);
-    Q_PROPERTY(QString method        READ method);
-    Q_PROPERTY(QUrl    url           READ url);
-    Q_PROPERTY(QString path          READ path);
-    Q_PROPERTY(QString httpVersion   READ httpVersion);
+    Q_PROPERTY(HeaderHash headers READ headers);
+    Q_PROPERTY(QString  remoteAddress READ remoteAddress);
+    Q_PROPERTY(quint16 remotePort READ remotePort);
+    Q_PROPERTY(QString method READ method);
+    Q_PROPERTY(QUrl url READ url);
+    Q_PROPERTY(QString path READ path);
+    Q_PROPERTY(QString httpVersion READ httpVersion);
+
     Q_ENUMS(HttpMethod);
+    
+    /// @cond nodoc
+    friend class QHttpConnection;
+    /// @endcond
 
 public:
     virtual ~QHttpRequest();
 
-    /*!
-     * Request Methods
-     * Taken from http_parser.h -- make sure to keep synced
-     */
-    enum HttpMethod {
+    /// Request method enumeration.
+    /** @note Taken from http_parser.h -- make sure to keep synced */
+    enum HttpMethod
+    {
         HTTP_DELETE = 0,
         HTTP_GET,
         HTTP_HEAD,
         HTTP_POST,
         HTTP_PUT,
-        /* pathological */
+        // pathological
         HTTP_CONNECT,
         HTTP_OPTIONS,
         HTTP_TRACE,
-        /* webdav */
+        // webdav
         HTTP_COPY,
         HTTP_LOCK,
         HTTP_MKCOL,
@@ -87,131 +82,104 @@ public:
         HTTP_PROPPATCH,
         HTTP_SEARCH,
         HTTP_UNLOCK,
-        /* subversion */
+        // subversion
         HTTP_REPORT,
         HTTP_MKACTIVITY,
         HTTP_CHECKOUT,
         HTTP_MERGE,
-        /* upnp */
+        // upnp
         HTTP_MSEARCH,
         HTTP_NOTIFY,
         HTTP_SUBSCRIBE,
         HTTP_UNSUBSCRIBE,
-        /* RFC-5789 */
+        // RFC-5789
         HTTP_PATCH,
         HTTP_PURGE
     };
 
-    /*!
-     * Returns the method string for the request
-     */
-    const QString methodString() const { return MethodToString(method()); }
+    /// The method used for the request.
+    HttpMethod method() const;
 
-    /*!
-     * The method used for the request.
-     */
-    HttpMethod method() const { return m_method; };
+    /// Returns the method string for the request.
+    /** @note This will plainly transform the enum into a string HTTP_GET -> "HTTP_GET". */
+    const QString methodString() const;
 
-    /*!
-     * The complete URL for the request. This
-     * includes the path and query string.
-     *
-     */
-    const QUrl& url() const { return m_url; };
+    /// The complete URL for the request.
+    /** This includes the path and query string.
+        @sa path() */
+    const QUrl& url() const;
 
-    /*!
-     * The path portion of the query URL.
-     *
-     * \sa url()
-     */
-    const QString path() const { return m_url.path(); };
+    /// The path portion of the query URL.
+    /** @sa url() */
+    const QString path() const;
 
-    /*!
-     * The HTTP version used by the client as a 
-     * 'x.x' string.
-     */
-    const QString& httpVersion() const { return m_version; };
+    /// The HTTP version of the request.
+    /** @return A string in the form of "x.x" */
+    const QString& httpVersion() const;
 
-    /*!
-     * Any query string included as part of a request.
-     * Usually used to send data in a GET request.
-     */
+    /// Any query string included as part of a request.
+    /** Usually used to send data in a GET request, see http://en.wikipedia.org/wiki/Query_string. */
     const QString& queryString() const;
 
-    /*!
-     * Get a hash of the headers sent by the client.
-     * NOTE: All header names are <strong>lowercase</strong>
-     * so that Content-Length becomes content-length and so on.
-     *
-     * This returns a reference! If you want to store headers
-     * somewhere else, where the request may be deleted,
-     * make sure you store them as a copy.
-     */
-    const HeaderHash& headers() const { return m_headers; };
+    /// Return all the headers sent by the client.
+    /** This returns a reference. If you want to store headers
+        somewhere else, where the request may be deleted,
+        make sure you store them as a copy.
+        @note All header names are <b>lowercase</b>
+        so that Content-Length becomes content-length etc. */
+    const HeaderHash& headers() const;
 
-    /*!
-     * Get the value of a header
-     *
-     * \param field Name of the header field (lowercase).
-     * \return Value of the header or null QString()
-     */
-    QString header(const QString &field) { return m_headers[field]; };
+    /// Get the value of a header.
+    /** Headers are stored as lowercase so the input @c field will be lowercased.
+        @param field Name of the header field
+        @return Value of the header or empty string if not found. */
+    QString header(const QString &field);
 
-    /*!
-     * IP Address of the client in dotted decimal format
-     */
-    const QString& remoteAddress() const { return m_remoteAddress; };
+    /// IP Address of the client in dotted decimal format.
+    const QString& remoteAddress() const;
 
-    /*!
-     * Outbound connection port for the client.
-     */
-    quint16 remotePort() const { return m_remotePort; };
+    /// Outbound connection port for the client.
+    quint16 remotePort() const;
 
-    /*!
-     * Post data
-     */
+    /// Request body data, empty for non POST/PUT requests.
+    /** @sa storeBody() */
     const QByteArray &body() const { return m_body; }
 
-    /*!
-     * Set immediately before end has been emitted,
-     * stating whether the message was properly received.
-     * Defaults to false untiil the message has completed.
-     */
+    /// If this request was successfully received.
+    /** Set before end() has been emitted, stating whether 
+        the message was properly received. This is false 
+        until the receiving the full request has completed. */
     bool successful() const { return m_success; }
 
-    /*!
-     * connect to data and store all data in a QByteArray
-     * accessible at body()
-     */
-    void storeBody()
-    {
-        connect(this, SIGNAL(data(const QByteArray &)),
-            this, SLOT(appendBody(const QByteArray &)),
-            Qt::UniqueConnection);
-    }
+    /// Utility function to make this request store all body data internally.
+    /** If you call this when the request is received via QHttpServer::newRequest()
+        the request will take care of storing the body data for you.
+        Once the end() signal is emitted you can access the body data with 
+        the body() function.
+        
+        If you wish to handle incoming data yourself don't call this function 
+        and see the data() signal.
+        @sa data() body() */
+    void storeBody();
 
 signals:
-    /*!
-     * This signal is emitted whenever body data is encountered
-     * in a message.
-     * This may be emitted zero or more times.
-     */
-    void data(const QByteArray &);
+    /// Emitted when new body data has been received.
+    /** @note This may be emitted zero or more times 
+        depending on the request type.
+        @param data Received data. */
+    void data(const QByteArray &data);
 
-    /*!
-     * Emitted at the end of the HTTP request.
-     * No data() signals will be emitted after this.
-     */
+    /// Emitted when the request has been fully received.
+    /** @note The no more data() signals will be emitted after this. */
     void end();
 
+private slots:
+    void appendBody(const QByteArray &body);
+    
 private:
     QHttpRequest(QHttpConnection *connection, QObject *parent = 0);
 
-    static QString MethodToString(HttpMethod method)
-    {
-        int index = staticMetaObject.indexOfEnumerator("HttpMethod");
-        return staticMetaObject.enumerator(index).valueToKey(method);
-    }
+    static QString MethodToString(HttpMethod method);
 
     void setMethod(HttpMethod method) { m_method = method; }
     void setVersion(const QString &version) { m_version = version; }
@@ -228,14 +196,6 @@ private:
     quint16 m_remotePort;
     QByteArray m_body;
     bool m_success;
-
-    friend class QHttpConnection;
-
-private slots:
-    void appendBody(const QByteArray &body)
-    {
-        m_body.append(body);
-    }
 };
 
 #endif

@@ -1,14 +1,16 @@
+#include "qhttpserverfwd.h"
+
 #include <QObject>
 
-class QHttpRequest;
-class QHttpResponse;
+/// HelloWorld
 
-class Hello : public QObject
+class HelloWorld : public QObject
 {
     Q_OBJECT
+
 public:
-    Hello();
+    HelloWorld();
 
 private slots:
-    void handle(QHttpRequest *req, QHttpResponse *resp);
+    void handleRequest(QHttpRequest *req, QHttpResponse *resp);
 };
