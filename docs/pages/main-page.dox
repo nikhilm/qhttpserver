@@ -9,10 +9,10 @@ HTTP Server suitable for C++ web applications backed
 by Qt. Since C++ web applications are pretty uncommon
 the market for this project is pretty low.
 
-But integrating this with a module like QtScript
-and using it to write JavaScript web applications is
-a tempting possibility, and something that I want to
-demonstrate at <a href="http://conf.kde.in">conf.kde.in 2011</a>.
+But integrating this with a module like QtScript and using it to write
+JavaScript web applications is a tempting possibility, and something that
+I demonstrated at <a href="http://conf.kde.in">conf.kde.in 2011</a>. The slides
+can be found on <a href="https://github.com/nikhilm/confkdein11">Github</a>.
 
 %QHttpServer uses a signal-slots based mechanism
 for all communication, so no inheritance is required.
