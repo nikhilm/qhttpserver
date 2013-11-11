@@ -47,16 +47,13 @@ Responder::Responder(QHttpRequest *req, QHttpResponse *resp)
     QString bodyStart = tr("<html><head><title>BodyData App</title></head><body><h1>Hello %1!</h1><p>").arg(name);
     resp->write(bodyStart.toUtf8());
 
-    connect(m_req, SIGNAL(data(const QByteArray&)), this, SLOT(accumulate(const QByteArray&)));
-    connect(m_req, SIGNAL(end()), this, SLOT(reply()));
+    connect(req, SIGNAL(data(const QByteArray&)), this, SLOT(accumulate(const QByteArray&)));
+    connect(req, SIGNAL(end()), this, SLOT(reply()));
     connect(m_resp, SIGNAL(done()), this, SLOT(deleteLater()));
 }
 
 Responder::~Responder()
 {
-    qDebug() << "Responder finished, deleting request:" << m_req;
-    delete m_req;
-    m_req = 0;
 }
 
 void Responder::accumulate(const QByteArray &data)

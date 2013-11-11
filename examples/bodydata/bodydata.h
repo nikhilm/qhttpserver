@@ -1,6 +1,7 @@
 #include "qhttpserverfwd.h"
 
 #include <QObject>
+#include <QScopedPointer>
 
 /// BodyData
 
@@ -33,6 +34,6 @@ private slots:
     void reply();
 
 private:
-    QHttpRequest *m_req;
+    QScopedPointer<QHttpRequest> m_req;
     QHttpResponse *m_resp;
 };
