@@ -117,10 +117,6 @@ public:
     /** @return A string in the form of "x.x" */
     const QString& httpVersion() const;
 
-    /// Any query string included as part of a request.
-    /** Usually used to send data in a GET request, see http://en.wikipedia.org/wiki/Query_string. */
-    const QString& queryString() const;
-
     /// Return all the headers sent by the client.
     /** This returns a reference. If you want to store headers
         somewhere else, where the request may be deleted,
