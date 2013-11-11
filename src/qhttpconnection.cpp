@@ -121,7 +121,9 @@ int QHttpConnection::MessageBegin(http_parser *parser)
 {
     QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     theConnection->m_currentHeaders.clear();
-    theConnection->m_request = new QHttpRequest(theConnection, theConnection /* parent */);
+    // The QHttpRequest should not be parented to this, since it's memory
+    // management is the responsibility of the user of the library.
+    theConnection->m_request = new QHttpRequest(theConnection);
     return 0;
 }
 
