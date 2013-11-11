@@ -73,6 +73,8 @@ QHttpConnection::~QHttpConnection()
 
 void QHttpConnection::socketDisconnected()
 {
+    deleteLater();
+
     if (m_request)
     {
         if (m_request->successful())
@@ -81,8 +83,6 @@ void QHttpConnection::socketDisconnected()
         m_request->setSuccessful(false);
         emit m_request->end();
     }
-
-    deleteLater();
 }
 
 void QHttpConnection::parseRequest()
@@ -121,7 +121,7 @@ int QHttpConnection::MessageBegin(http_parser *parser)
 {
     QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     theConnection->m_currentHeaders.clear();
-    theConnection->m_request = new QHttpRequest(theConnection);
+    theConnection->m_request = new QHttpRequest(theConnection, theConnection /* parent */);
     return 0;
 }
 
