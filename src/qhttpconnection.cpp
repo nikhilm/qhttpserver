@@ -113,6 +113,36 @@ void QHttpConnection::responseDone()
         m_socket->disconnectFromHost();
 }
 
+/* URL Utilities */
+#define HAS_URL_FIELD(info, field) (info.field_set & (1 << (field)))
+
+#define GET_FIELD(data, info, field) \
+    QString::fromLatin1(data + info.field_data[field].off, info.field_data[field].len)
+
+#define CHECK_AND_GET_FIELD(data, info, field) \
+    (HAS_URL_FIELD(info, field) ? GET_FIELD(data, info, field) : QString())
+
+QUrl createUrl(const char* urlData, const http_parser_url& urlInfo)
+{
+    QUrl url;
+    url.setScheme(CHECK_AND_GET_FIELD(urlData, urlInfo, UF_SCHEMA));
+    url.setHost(CHECK_AND_GET_FIELD(urlData, urlInfo, UF_HOST));
+    // Port is dealt with separately since it is available as an integer.
+    url.setPath(CHECK_AND_GET_FIELD(urlData, urlInfo, UF_PATH));
+    url.setQuery(CHECK_AND_GET_FIELD(urlData, urlInfo, UF_QUERY));
+    url.setFragment(CHECK_AND_GET_FIELD(urlData, urlInfo, UF_FRAGMENT));
+    url.setUserInfo(CHECK_AND_GET_FIELD(urlData, urlInfo, UF_USERINFO));
+
+    if (HAS_URL_FIELD(urlInfo, UF_PORT))
+        url.setPort(urlInfo.port);
+
+    return url;
+}
+
+#undef CHECK_AND_SET_FIELD
+#undef GET_FIELD
+#undef HAS_URL_FIELD
+
 /********************
  * Static Callbacks *
  *******************/
@@ -121,6 +151,9 @@ int QHttpConnection::MessageBegin(http_parser *parser)
 {
     QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     theConnection->m_currentHeaders.clear();
+    theConnection->m_currentUrl.clear();
+    theConnection->m_currentUrl.reserve(128);
+
     // The QHttpRequest should not be parented to this, since it's memory
     // management is the responsibility of the user of the library.
     theConnection->m_request = new QHttpRequest(theConnection);
@@ -137,6 +170,17 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
 
     /** set version **/
     theConnection->m_request->setVersion(QString("%1.%2").arg(parser->http_major).arg(parser->http_minor));
+
+    /** get parsed url **/
+    struct http_parser_url urlInfo;
+    int r = http_parser_parse_url(theConnection->m_currentUrl.constData(),
+                                  theConnection->m_currentUrl.size(),
+                                  parser->method == HTTP_CONNECT,
+                                  &urlInfo);
+    Q_ASSERT(r);
+    Q_UNUSED(r);
+
+    theConnection->m_request->setUrl(createUrl(theConnection->m_currentUrl.constData(), urlInfo));
 
     // Insert last remaining header
     theConnection->m_currentHeaders[theConnection->m_currentHeaderField.toLower()] = theConnection->m_currentHeaderValue;
@@ -174,8 +218,7 @@ int QHttpConnection::Url(http_parser *parser, const char *at, size_t length)
     QHttpConnection *theConnection = static_cast<QHttpConnection*>(parser->data);
     Q_ASSERT(theConnection->m_request);
 
-    QString url = QString::fromLatin1(at, length);
-    theConnection->m_request->setUrl(QUrl(url));
+    theConnection->m_currentUrl.append(at, length);
     return 0;
 }
 
