@@ -115,6 +115,9 @@ bool QHttpServer::listen(const QHostAddress &address, quint16 port)
     bool couldBindToPort = m_tcpServer->listen(address, port);
     if (couldBindToPort) {
         connect(m_tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
+    } else {
+        delete m_tcpServer;
+        m_tcpServer = NULL;
     }
     return couldBindToPort;
 }
