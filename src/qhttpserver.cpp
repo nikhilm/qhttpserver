@@ -92,8 +92,10 @@ QHttpServer::QHttpServer(QObject *parent)
 // }}}
 }
 
-QHttpServer::~QHttpServer()
-{
+QHttpServer::~QHttpServer() {
+    close();
+    if (m_tcpServer)
+        m_tcpServer->deleteLater();
 }
 
 void QHttpServer::newConnection()
