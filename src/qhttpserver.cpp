@@ -110,6 +110,9 @@ void QHttpServer::newConnection()
 
 bool QHttpServer::listen(const QHostAddress &address, quint16 port)
 {
+    if (m_tcpServer) {
+        m_tcpServer->deleteLater();
+    }
     m_tcpServer = new QTcpServer(this);
 
     bool couldBindToPort = m_tcpServer->listen(address, port);
