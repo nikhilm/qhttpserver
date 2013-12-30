@@ -93,9 +93,6 @@ QHttpServer::QHttpServer(QObject *parent)
 }
 
 QHttpServer::~QHttpServer() {
-    close();
-    if (m_tcpServer)
-        m_tcpServer->deleteLater();
 }
 
 void QHttpServer::newConnection()
@@ -112,15 +109,12 @@ void QHttpServer::newConnection()
 
 bool QHttpServer::listen(const QHostAddress &address, quint16 port)
 {
-    if (m_tcpServer) {
-        m_tcpServer->deleteLater();
-    }
+    Q_ASSERT(NULL == m_tcpServer);
     m_tcpServer = new QTcpServer(this);
 
     bool couldBindToPort = m_tcpServer->listen(address, port);
     if (couldBindToPort) {
         connect(m_tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
-        connect(m_tcpServer, SIGNAL(destroyed()), this, SLOT(tcpServerDestroyed()));
     } else {
         delete m_tcpServer;
         m_tcpServer = NULL;
@@ -137,8 +131,4 @@ void QHttpServer::close()
 {
     if (m_tcpServer)
         m_tcpServer->close();
-}
-
-void QHttpServer::tcpServerDestroyed() {
-    m_tcpServer = NULL;
 }
