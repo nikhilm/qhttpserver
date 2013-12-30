@@ -91,7 +91,7 @@ signals:
 
 private slots:
     void newConnection();
-    void tcpServerDestoryed();
+    void tcpServerDestroyed();
 
 private:
     QTcpServer *m_tcpServer;

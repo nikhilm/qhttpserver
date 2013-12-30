@@ -120,7 +120,7 @@ bool QHttpServer::listen(const QHostAddress &address, quint16 port)
     bool couldBindToPort = m_tcpServer->listen(address, port);
     if (couldBindToPort) {
         connect(m_tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
-        connect(m_tcpServer, SIGNAL(destroyed()), this, SLOT(tcpServerDestoryed()));
+        connect(m_tcpServer, SIGNAL(destroyed()), this, SLOT(tcpServerDestroyed()));
     } else {
         delete m_tcpServer;
         m_tcpServer = NULL;
@@ -139,6 +139,6 @@ void QHttpServer::close()
         m_tcpServer->close();
 }
 
-void QHttpServer::tcpServerDestoryed() {
+void QHttpServer::tcpServerDestroyed() {
     m_tcpServer = NULL;
 }
