@@ -38,6 +38,8 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     , m_parser(0)
     , m_parserSettings(0)
     , m_request(0)
+    , m_transmitLen(0)
+    , m_transmitPos(0)
 {
     qDebug() << "Got new connection" << socket->peerAddress() << socket->peerPort();
 
@@ -57,6 +59,7 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(parseRequest()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
+    connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
 }
 
 QHttpConnection::~QHttpConnection()
@@ -85,6 +88,18 @@ void QHttpConnection::socketDisconnected()
     }
 }
 
+void QHttpConnection::bytesWritten(qint64 count)
+{
+    m_transmitPos += count;
+
+    if (m_transmitPos == m_transmitLen)
+    {
+        m_transmitLen = 0;
+        m_transmitPos = 0;
+        emit allDataSent();
+    }
+}
+
 void QHttpConnection::parseRequest()
 {
     Q_ASSERT(m_parser);
@@ -99,6 +114,7 @@ void QHttpConnection::parseRequest()
 void QHttpConnection::write(const QByteArray &data)
 {
     m_socket->write(data);
+    m_transmitLen += data.size();
 }
 
 void QHttpConnection::flush()
