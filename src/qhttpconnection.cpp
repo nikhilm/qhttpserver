@@ -24,7 +24,6 @@
 
 #include <QTcpSocket>
 #include <QHostAddress>
-#include <QDebug>
 
 #include "http_parser.h"
 #include "qhttprequest.h"
@@ -41,8 +40,6 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
     , m_transmitLen(0)
     , m_transmitPos(0)
 {
-    qDebug() << "Got new connection" << socket->peerAddress() << socket->peerPort();
-
     m_parser = (http_parser*)malloc(sizeof(http_parser));
     http_parser_init(m_parser, HTTP_REQUEST);
 
