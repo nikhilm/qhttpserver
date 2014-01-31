@@ -42,7 +42,7 @@ QHttpResponse::QHttpResponse(QHttpConnection *connection)
     , m_useChunkedEncoding(false)
     , m_finished(false)
 {
-   connect(m_connection, SIGNAL(allDataSent()), this, SIGNAL(allDataSent()));
+   connect(m_connection, SIGNAL(allBytesWritten()), this, SIGNAL(allBytesWritten()));
 }
 
 QHttpResponse::~QHttpResponse()

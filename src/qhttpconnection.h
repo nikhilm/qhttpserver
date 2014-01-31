@@ -43,13 +43,13 @@ public:
 
 signals:
     void newRequest(QHttpRequest*, QHttpResponse*);
-    void allDataSent();
+    void allBytesWritten();
 
 private slots:
     void parseRequest();
     void responseDone();
     void socketDisconnected();
-    void bytesWritten(qint64);
+    void updateWriteCount(qint64);
 
 private:
     static int MessageBegin(http_parser *parser);

@@ -130,7 +130,7 @@ signals:
         of it's buffered data. It is possible to implement memory-efficient
         file transfers by calling \ref write() for a block of data only after
         receiving this signal. */
-    void allDataSent();
+    void allBytesWritten();
 
     /// Emitted when the response is finished.
     /** You should <b>not</b> interact with this object

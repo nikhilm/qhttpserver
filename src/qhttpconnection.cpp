@@ -56,7 +56,7 @@ QHttpConnection::QHttpConnection(QTcpSocket *socket, QObject *parent)
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(parseRequest()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
-    connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
+    connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(updateWriteCount(qint64)));
 }
 
 QHttpConnection::~QHttpConnection()
@@ -85,7 +85,7 @@ void QHttpConnection::socketDisconnected()
     }
 }
 
-void QHttpConnection::bytesWritten(qint64 count)
+void QHttpConnection::updateWriteCount(qint64 count)
 {
     m_transmitPos += count;
 
@@ -93,7 +93,7 @@ void QHttpConnection::bytesWritten(qint64 count)
     {
         m_transmitLen = 0;
         m_transmitPos = 0;
-        emit allDataSent();
+        emit allBytesWritten();
     }
 }
 
