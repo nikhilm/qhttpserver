@@ -124,6 +124,13 @@ public slots:
     void end(const QByteArray &data = "");
 
 signals:
+    /// Emitted when all the data has been sent
+    /** This signal indicates that the underlaying socket has transmitted all
+        of it's buffered data. It is possible to implement memory-efficient
+        file transfers by calling \ref write() for a block of data only after
+        receiving this signal. */
+    void allBytesWritten();
+
     /// Emitted when the response is finished.
     /** You should <b>not</b> interact with this object
         after done() has been emitted as the object
