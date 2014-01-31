@@ -1,23 +1,23 @@
 /*
  * Copyright 2011-2013 Nikhil Marathe <nsm.nikhil@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
  * deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
  * sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE. 
+ * IN THE SOFTWARE.
  */
 
 #ifndef Q_HTTP_RESPONSE
@@ -42,8 +42,7 @@ class QHTTPSERVER_API QHttpResponse : public QObject
 
 public:
     /// HTTP status code.
-    enum StatusCode
-    {
+    enum StatusCode {
         STATUS_CONTINUE = 100,
         STATUS_SWITCH_PROTOCOLS = 101,
         STATUS_OK = 200,
@@ -87,7 +86,7 @@ public:
     };
 
     virtual ~QHttpResponse();
-    
+
     /// @cond nodoc
     friend class QHttpConnection;
     /// @endcond
@@ -100,13 +99,13 @@ public slots:
         @param value Header value to be set. */
     void setHeader(const QString &field, const QString &value);
 
-    /// Writes the header section of the response 
+    /// Writes the header section of the response
     /// using @c status as the response status code.
     /** @param statusCode Status code for the response.
         @note Any headers should be set before
         invoking this function with setHeader(). */
     void writeHead(int statusCode);
-    
+
     /** @overload */
     void writeHead(StatusCode statusCode);
 
@@ -114,12 +113,12 @@ public slots:
     /** @note writeHead() must be called before this function. */
     void write(const QByteArray &data);
 
-    /// End/finish the response. 
-    /** Data will be flushed to the underlying socket 
-        and the connection itself will be closed if 
+    /// End/finish the response.
+    /** Data will be flushed to the underlying socket
+        and the connection itself will be closed if
         this is the last response.
 
-        This will emit done() and queue this object 
+        This will emit done() and queue this object
         for deletion. For details see \ref memorymanagement.
         @param data Optional data to be written before finishing. */
     void end(const QByteArray &data = "");

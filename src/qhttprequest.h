@@ -1,23 +1,23 @@
 /*
  * Copyright 2011-2013 Nikhil Marathe <nsm.nikhil@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
  * deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
  * sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE. 
+ * IN THE SOFTWARE.
  */
 
 #ifndef Q_HTTP_REQUEST
@@ -32,10 +32,10 @@
 #include <QUrl>
 
 /// The QHttpRequest class represents the header and body data sent by the client.
-/** The requests header data is available immediately. Body data is streamed as 
-    it comes in via the data() signal. As a consequence the application's request 
-    callback should ensure that it connects to the data() signal before control 
-    returns back to the event loop. Otherwise there is a risk of some data never 
+/** The requests header data is available immediately. Body data is streamed as
+    it comes in via the data() signal. As a consequence the application's request
+    callback should ensure that it connects to the data() signal before control
+    returns back to the event loop. Otherwise there is a risk of some data never
     being received by the application.
 
     The class is <b>read-only</b>. */
@@ -44,7 +44,7 @@ class QHTTPSERVER_API QHttpRequest : public QObject
     Q_OBJECT
 
     Q_PROPERTY(HeaderHash headers READ headers);
-    Q_PROPERTY(QString  remoteAddress READ remoteAddress);
+    Q_PROPERTY(QString remoteAddress READ remoteAddress);
     Q_PROPERTY(quint16 remotePort READ remotePort);
     Q_PROPERTY(QString method READ method);
     Q_PROPERTY(QUrl url READ url);
@@ -52,7 +52,7 @@ class QHTTPSERVER_API QHttpRequest : public QObject
     Q_PROPERTY(QString httpVersion READ httpVersion);
 
     Q_ENUMS(HttpMethod);
-    
+
     /// @cond nodoc
     friend class QHttpConnection;
     /// @endcond
@@ -62,8 +62,7 @@ public:
 
     /// Request method enumeration.
     /** @note Taken from http_parser.h -- make sure to keep synced */
-    enum HttpMethod
-    {
+    enum HttpMethod {
         HTTP_DELETE = 0,
         HTTP_GET,
         HTTP_HEAD,
@@ -107,7 +106,7 @@ public:
     /// The complete URL for the request.
     /** This includes the path and query string.
         @sa path() */
-    const QUrl& url() const;
+    const QUrl &url() const;
 
     /// The path portion of the query URL.
     /** @sa url() */
@@ -115,7 +114,7 @@ public:
 
     /// The HTTP version of the request.
     /** @return A string in the form of "x.x" */
-    const QString& httpVersion() const;
+    const QString &httpVersion() const;
 
     /// Return all the headers sent by the client.
     /** This returns a reference. If you want to store headers
@@ -123,7 +122,7 @@ public:
         make sure you store them as a copy.
         @note All header names are <b>lowercase</b>
         so that Content-Length becomes content-length etc. */
-    const HeaderHash& headers() const;
+    const HeaderHash &headers() const;
 
     /// Get the value of a header.
     /** Headers are stored as lowercase so the input @c field will be lowercased.
@@ -132,35 +131,41 @@ public:
     QString header(const QString &field);
 
     /// IP Address of the client in dotted decimal format.
-    const QString& remoteAddress() const;
+    const QString &remoteAddress() const;
 
     /// Outbound connection port for the client.
     quint16 remotePort() const;
 
     /// Request body data, empty for non POST/PUT requests.
     /** @sa storeBody() */
-    const QByteArray &body() const { return m_body; }
+    const QByteArray &body() const
+    {
+        return m_body;
+    }
 
     /// If this request was successfully received.
-    /** Set before end() has been emitted, stating whether 
-        the message was properly received. This is false 
+    /** Set before end() has been emitted, stating whether
+        the message was properly received. This is false
         until the receiving the full request has completed. */
-    bool successful() const { return m_success; }
+    bool successful() const
+    {
+        return m_success;
+    }
 
     /// Utility function to make this request store all body data internally.
     /** If you call this when the request is received via QHttpServer::newRequest()
         the request will take care of storing the body data for you.
-        Once the end() signal is emitted you can access the body data with 
+        Once the end() signal is emitted you can access the body data with
         the body() function.
-        
-        If you wish to handle incoming data yourself don't call this function 
+
+        If you wish to handle incoming data yourself don't call this function
         and see the data() signal.
         @sa data() body() */
     void storeBody();
 
 signals:
     /// Emitted when new body data has been received.
-    /** @note This may be emitted zero or more times 
+    /** @note This may be emitted zero or more times
         depending on the request type.
         @param data Received data. */
     void data(const QByteArray &data);
@@ -171,7 +176,7 @@ signals:
 
 private slots:
     void appendBody(const QByteArray &body);
-    
+
 private:
     QHttpRequest(QHttpConnection *connection, QObject *parent = 0);
 
