@@ -92,7 +92,8 @@ QHttpServer::QHttpServer(QObject *parent)
 // }}}
 }
 
-QHttpServer::~QHttpServer() {
+QHttpServer::~QHttpServer()
+{
 }
 
 void QHttpServer::newConnection()
@@ -109,7 +110,7 @@ void QHttpServer::newConnection()
 
 bool QHttpServer::listen(const QHostAddress &address, quint16 port)
 {
-    Q_ASSERT(NULL == m_tcpServer);
+    Q_ASSERT(!m_tcpServer);
     m_tcpServer = new QTcpServer(this);
 
     bool couldBindToPort = m_tcpServer->listen(address, port);
