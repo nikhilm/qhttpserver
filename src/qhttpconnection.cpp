@@ -87,6 +87,8 @@ void QHttpConnection::socketDisconnected()
 
 void QHttpConnection::updateWriteCount(qint64 count)
 {
+    Q_ASSERT(m_transmitPos + count <= m_transmitLen);
+
     m_transmitPos += count;
 
     if (m_transmitPos == m_transmitLen)
