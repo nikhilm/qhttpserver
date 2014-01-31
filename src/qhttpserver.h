@@ -81,7 +81,6 @@ public:
 
     /// Stop the server and listening for new connections.
     void close();
-
 signals:
     /// Emitted when a client makes a new request to the server.
     /** The slot should use the given @c request and @c response
