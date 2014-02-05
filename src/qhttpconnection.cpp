@@ -197,7 +197,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
     int r = http_parser_parse_url(theConnection->m_currentUrl.constData(),
                                   theConnection->m_currentUrl.size(),
                                   parser->method == HTTP_CONNECT, &urlInfo);
-    Q_ASSERT(r);
+    Q_ASSERT(r == 0);
     Q_UNUSED(r);
 
     theConnection->m_request->setUrl(createUrl(theConnection->m_currentUrl.constData(), urlInfo));
