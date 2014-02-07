@@ -5,6 +5,8 @@ A Qt HTTP Server - because hard-core programmers write web-apps in C++ :)
 
 It uses Ryan Dahl's [HTTP Parser](http://github.com/ry/http-parser) and is asynchronous and does not require any inheritance.
 
+QHttpServer is available under the MIT License.
+
 **NOTE: QHttpServer is NOT fully HTTP compliant right now! DO NOT use it for
 anything complex**
 
@@ -60,9 +62,11 @@ The server and request/response objects emit various signals
 and have guarantees about memory management. See the API documentation for
 these.
 
-Contributors
-------------
+Contribute
+----------
 
-* Nikhil Marathe (maintainer)
-* David Wolinsy
-* Jonne Nauha
+Feel free to file issues, branch and send pull requests. If you plan to work on a major feature (say WebSocket support), please run it by me first by filing an issue! qhttpserver has a narrow scope and API and I'd like to keep it that way, so a thousand line patch that implements the kitchen sink is unlikely to be accepted.
+
+- Nikhil Marathe (maintainer)
+
+Everybody who has ever contributed shows up in [Contributors](https://github.com/nikhilm/qhttpserver/graphs/contributors).
