@@ -3,7 +3,7 @@ QHttpServer
 
 A Qt HTTP Server - because hard-core programmers write web-apps in C++ :)
 
-It uses Ryan Dahl's [HTTP Parser](http://github.com/ry/http-parser) and is asynchronous and does not require any inheritance.
+It uses Joyent's [HTTP Parser](http://github.com/joyent/http-parser) and is asynchronous and does not require any inheritance.
 
 QHttpServer is available under the MIT License.
 
