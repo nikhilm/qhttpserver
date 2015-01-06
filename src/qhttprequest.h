@@ -43,15 +43,15 @@ class QHTTPSERVER_API QHttpRequest : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(HeaderHash headers READ headers);
-    Q_PROPERTY(QString remoteAddress READ remoteAddress);
-    Q_PROPERTY(quint16 remotePort READ remotePort);
-    Q_PROPERTY(QString method READ method);
-    Q_PROPERTY(QUrl url READ url);
-    Q_PROPERTY(QString path READ path);
-    Q_PROPERTY(QString httpVersion READ httpVersion);
+    Q_PROPERTY(HeaderHash headers READ headers)
+    Q_PROPERTY(QString remoteAddress READ remoteAddress)
+    Q_PROPERTY(quint16 remotePort READ remotePort)
+    Q_PROPERTY(QString method READ method)
+    Q_PROPERTY(QUrl url READ url)
+    Q_PROPERTY(QString path READ path)
+    Q_PROPERTY(QString httpVersion READ httpVersion)
 
-    Q_ENUMS(HttpMethod);
+    Q_ENUMS(HttpMethod)
 
     /// @cond nodoc
     friend class QHttpConnection;
