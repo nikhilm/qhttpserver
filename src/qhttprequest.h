@@ -163,7 +163,7 @@ public:
         @sa data() body() */
     void storeBody();
 
-signals:
+Q_SIGNALS:
     /// Emitted when new body data has been received.
     /** @note This may be emitted zero or more times
         depending on the request type.
@@ -174,7 +174,7 @@ signals:
     /** @note The no more data() signals will be emitted after this. */
     void end();
 
-private slots:
+private Q_SLOTS:
     void appendBody(const QByteArray &body);
 
 private:

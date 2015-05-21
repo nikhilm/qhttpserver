@@ -42,11 +42,11 @@ public:
     void flush();
     void waitForBytesWritten();
 
-signals:
+Q_SIGNALS:
     void newRequest(QHttpRequest *, QHttpResponse *);
     void allBytesWritten();
 
-private slots:
+private Q_SLOTS:
     void parseRequest();
     void responseDone();
     void socketDisconnected();
