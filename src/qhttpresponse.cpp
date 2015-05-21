@@ -182,7 +182,7 @@ void QHttpResponse::end(const QByteArray &data)
         write(data);
     m_finished = true;
 
-    emit done();
+    Q_EMIT done();
 
     /// @todo End connection and delete ourselves. Is this a still valid note?
     deleteLater();
@@ -191,6 +191,6 @@ void QHttpResponse::end(const QByteArray &data)
 void QHttpResponse::connectionClosed()
 {
     m_finished = true;
-    emit done();
+    Q_EMIT done();
     deleteLater();
 }
