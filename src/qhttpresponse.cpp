@@ -161,6 +161,16 @@ void QHttpResponse::write(const QByteArray &data)
     m_connection->write(data);
 }
 
+void QHttpResponse::flush()
+{
+    m_connection->flush();
+}
+
+void QHttpResponse::waitForBytesWritten()
+{
+    m_connection->waitForBytesWritten();
+}
+
 void QHttpResponse::end(const QByteArray &data)
 {
     if (m_finished) {

@@ -113,6 +113,14 @@ public slots:
     /** @note writeHead() must be called before this function. */
     void write(const QByteArray &data);
 
+    /// Flushes the written data to the client.
+    /** @note writeHead() must be called before this function. */
+    void flush();
+
+    /// Waiting for bytes to be written. See QAbstractSocket::waitForBytesWritten in the Qt documentation
+    /** @note writeHead() must be called before this function. */
+    void waitForBytesWritten();
+
     /// End/finish the response.
     /** Data will be flushed to the underlying socket
         and the connection itself will be closed if

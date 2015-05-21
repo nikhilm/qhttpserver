@@ -119,6 +119,11 @@ void QHttpConnection::flush()
     m_socket->flush();
 }
 
+void QHttpConnection::waitForBytesWritten()
+{
+    m_socket->waitForBytesWritten();
+}
+
 void QHttpConnection::responseDone()
 {
     QHttpResponse *response = qobject_cast<QHttpResponse *>(QObject::sender());
