@@ -50,6 +50,7 @@ private Q_SLOTS:
     void parseRequest();
     void responseDone();
     void socketDisconnected();
+    void invalidateRequest();
     void updateWriteCount(qint64);
 
 private:
